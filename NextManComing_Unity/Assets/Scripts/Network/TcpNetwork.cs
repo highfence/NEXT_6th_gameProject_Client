@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using Packet;
 
 internal class TcpNetwork
 {
@@ -38,7 +39,7 @@ internal class TcpNetwork
 		}
 		catch (Exception e)
 		{
-			Debug.LogError("Socket Create Falied Error : " + e.Message);
+			Debug.LogError("Socket creation falied error : " + e.Message);
 		}
 	}
 
@@ -77,7 +78,7 @@ internal class TcpNetwork
 	{
 		if (IsConnected == false)
 		{
-			Debug.LogAssertion("Socket Connection Not Completed");
+			Debug.LogAssertion("Socket connection not completed yet");
 			return;
 		}
 
@@ -166,7 +167,7 @@ internal class TcpNetwork
 		}
 		catch (SocketException e)
 		{
-			Debug.LogAssertion("Server Connection Failed : " + e.ToString());
+			Debug.LogAssertion("Server connection failed : " + e.ToString());
 			IsConnected = false;
 		}
 	}
@@ -179,11 +180,11 @@ internal class TcpNetwork
 			// 접속이 완료되었으므로 Connect 요청을 그만 둠.
 			socket.EndConnect(asyncResult);
 			IsConnected = true;
-			Debug.LogFormat("Server Connect Success Ip {0}, Port {1}", Ip, Port);
+			Debug.LogFormat("Server connect success ip {0}, port {1}", Ip, Port);
 		}
 		catch (Exception e)
 		{
-			Debug.Log("Socket Connect Callback Function Failed : " + e.Message);
+			Debug.Log("Socket connect callback function failed : " + e.Message);
 			return;
 		}
 
@@ -239,7 +240,7 @@ internal class TcpNetwork
 
 			var id = BitConverter.ToInt32(recvData._buffer, 0);
 			var bodySize = BitConverter.ToInt32(recvData._buffer, 4);
-			Debug.LogFormat("Recv Packet Id {0}, size {1}", id, bodySize);
+			Debug.LogFormat("Recv packet id {0}, size {1}", id, bodySize);
 
 			// 패킷 조제.
 			var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, bodySize);
@@ -279,6 +280,37 @@ internal class TcpNetwork
 		{
 			return;
 		}
+
+		var sendData = (AsyncSendData)asyncResult;
+
+		var sendedSize = 0;
+
+		try
+		{
+			// 비동기 Send 요청을 끝내준다.
+			sendedSize = sendData._socket.EndSend(asyncResult);
+		}
+		catch (SocketException e)
+		{
+			HandleException(e);
+		}
+
+		// 만약 요청한 사이즈보다 보낸 데이터가 작다면
+		if (sendedSize < sendData._sendSize)
+		{
+			// 다시 비동기 Send를 요청.
+			socket.BeginSend(
+				sendData._buffer,
+				sendedSize,
+				sendData._sendSize - sendedSize,
+				SocketFlags.Truncated,              // 메시지가 너무 커서 잘렸을 경우의 플래그.
+				sendCallBack,
+				sendData);
+
+			Debug.LogAssertion("Sended size is smaller than requested size");
+		}
+
+		Debug.Log("Packet send end!");
 	}
 
 	// SocketException을 처리하는 메소드.
