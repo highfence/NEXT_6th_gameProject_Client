@@ -6,10 +6,11 @@ namespace PacketInfo
 {
 	enum PacketId
 	{
-
+		ServerConnectReq = 101,
+		ServerConnectRes = 102
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 4)]
 	public class PacketHeader
 	{
 		public int PacketId;
@@ -21,13 +22,22 @@ namespace PacketInfo
 	{
 		public int PacketId;
 		public int BodySize;
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
-		public string Data;
+		public byte[] Data;
 	}
 
+	[MessagePackObject]
 	public class ServerConnectReq
 	{
+		[Key(0)]
 		public string Id;
+		[Key(1)]
 		public Int64 Token;
+	}
+
+	[MessagePackObject]
+	public class ServerConnectRes
+	{
+		[Key(0)]
+		public int Result;
 	}
 }

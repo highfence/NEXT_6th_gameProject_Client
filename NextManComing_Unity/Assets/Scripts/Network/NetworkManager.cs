@@ -1,5 +1,7 @@
-﻿using UnityEngine;
-using Packet;
+﻿using MessagePack;
+using UnityEngine;
+using PacketInfo;
+using System;
 
 internal partial class NetworkManager : MonoBehaviour
 {
@@ -55,9 +57,25 @@ internal partial class NetworkManager : MonoBehaviour
 		}
 	}
 
-	private void InvokePacketEvents(Packet.Packet receivedPacket)
+	private void InvokePacketEvents(Packet receivedPacket)
 	{
-
+		switch ((PacketId)receivedPacket.PacketId)
+		{
+			case PacketId.ServerConnectRes :
+				OnServerConnectRes.Invoke(MessagePackSerializer.Deserialize<ServerConnectRes>(receivedPacket.Data));
+				break;
+		}
 	}
 
+	// 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.
+	public void HttpPost<T>(string url, string bodyJson, Func<T, bool> onSuccess)
+	{
+		StartCoroutine(HttpHandler.PostRequest<T>(url, bodyJson, onSuccess));
+	}
+
+	// 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.
+	public void SendPacket<T>(T data, PacketId packetId)
+	{
+		TcpHandler.SendPacket(data, packetId);
+	}
 }

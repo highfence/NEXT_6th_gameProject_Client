@@ -74,6 +74,7 @@ internal class TcpNetwork
 		socket = null;
 	}
 
+	// 게임 서버에게 요청한 패킷을 보내주는 메소드.
 	public void SendPacket<T>(T data, PacketId packetId)
 	{
 		if (IsConnected == false)
@@ -90,6 +91,7 @@ internal class TcpNetwork
 		unsafe
 		{
 			#region PREPARE SENDING DATAS
+
 			// 보낼 데이터 구조체를 Json 형태로 바꿔줌.
 			string jsonData = JsonUtility.ToJson(data);
 
@@ -103,6 +105,7 @@ internal class TcpNetwork
 			#endregion
 
 			#region COPYING PACKET HEADER
+
 			// 패킷 아이디 주소의 첫 번째 자리.
 			byte* packetIdPos = (byte*)&id;
 
@@ -123,6 +126,7 @@ internal class TcpNetwork
 			#endregion
 
 			#region COPYING PACKET BODY
+
 			// 패킷 바디 주소의 첫 번째 자리.
 			char[] bodyPos = jsonData.ToCharArray();
 
