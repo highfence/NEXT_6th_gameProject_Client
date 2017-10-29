@@ -31,7 +31,7 @@ internal class TcpNetwork
 
 		recvCallBack = new AsyncCallback(RecvCallBack);
 		sendCallBack = new AsyncCallback(SendCallBack);
-		packetQueue = new Queue<Packet.Packet>();
+		packetQueue = new Queue<Packet>();
 
 		try
 		{
@@ -100,8 +100,8 @@ internal class TcpNetwork
 
 
 			// Send 버퍼 생성.
-			sendData._buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
-			sendData._sendSize = NetworkDefinition.PacketHeaderSize + bodySize;
+			sendData.Buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
+			sendData.SendSize = NetworkDefinition.PacketHeaderSize + bodySize;
 			#endregion
 
 			#region COPYING PACKET HEADER
@@ -112,7 +112,7 @@ internal class TcpNetwork
 			// 포인터를 옮겨가며 버퍼에 기록.
 			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
 			{
-				sendData._buffer[i] = packetIdPos[i];
+				sendData.Buffer[i] = packetIdPos[i];
 			}
 
 			// 패킷 바디사이즈 주소의 첫 번째 자리.
@@ -121,7 +121,7 @@ internal class TcpNetwork
 			// 아이디를 기록했던 버퍼 자리 뒤부터 기록.
 			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
 			{
-				sendData._buffer[NetworkDefinition.IntSize + i] = bodySizePos[i];
+				sendData.Buffer[NetworkDefinition.IntSize + i] = bodySizePos[i];
 			}
 			#endregion
 
@@ -133,12 +133,12 @@ internal class TcpNetwork
 			// 헤더를 기록했던 버퍼 자리 뒤부터 기록.
 			for (int i = 0; i < bodySize - 1; ++i)
 			{
-				sendData._buffer[NetworkDefinition.PacketHeaderSize + i] = (byte)bodyPos[i];
+				sendData.Buffer[NetworkDefinition.PacketHeaderSize + i] = (byte)bodyPos[i];
 			}
 
 			// 뒤에 널 문자 추가.
 			var nullChar = Convert.ToByte('\0');
-			sendData._buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
+			sendData.Buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
 
 			#endregion;
 		}
@@ -147,7 +147,7 @@ internal class TcpNetwork
 		{
 			// 비동기 전송 시작. 파라미터는 BeginReceive와 대동소이하므로 생략. 
 			socket.BeginSend(
-				sendData._buffer,
+				sendData.Buffer,
 				0,
 				NetworkDefinition.PacketHeaderSize + bodySize,
 				SocketFlags.None,
@@ -196,9 +196,9 @@ internal class TcpNetwork
 
 		// 연결된 소켓에 Recv를 걸어준다.
 		socket.BeginReceive(
-			recvData._buffer,             // 버퍼
+			recvData.Buffer,             // 버퍼
 			0,                            // 받은 데이터를 저장할 zero-base postion
-			recvData._buffer.Length,      // 버퍼 길이
+			recvData.Buffer.Length,      // 버퍼 길이
 			SocketFlags.None,             // SocketFlags, 여기서는 None을 지정한다.
 			recvCallBack,                 // Recv IO가 끝난 뒤 호출할 메소드.
 			recvData                      // IO가 끝난 뒤 호출할 메소드의 인자로 들어갈 사용자 구조체.
@@ -220,9 +220,9 @@ internal class TcpNetwork
 		try
 		{
 			// 비동기 IO를 이제 끝내고 받은 바이트 수를 추가해준다.
-			recvData._recvSize += recvData._socket.EndReceive(asyncResult);
+			recvData.RecvSize += recvData.Socket.EndReceive(asyncResult);
 			// 읽었던 위치를 처음으로 돌려준다.
-			recvData._readPos = 0;
+			recvData.ReadPos = 0;
 		}
 		catch (SocketException e)
 		{
@@ -234,7 +234,7 @@ internal class TcpNetwork
 		while (true)
 		{
 			// 헤더 사이즈보다 적은 데이터가 있다면 더 이상 패킷을 만들지 않음.
-			if (recvData._recvSize < NetworkDefinition.PacketHeaderSize)
+			if (recvData.RecvSize < NetworkDefinition.PacketHeaderSize)
 			{
 				break;
 			}
@@ -242,20 +242,20 @@ internal class TcpNetwork
 			// 패킷 헤더 조제.
 			var header = new PacketHeader()
 			{
-				PacketId = BitConverter.ToInt32(recvData._buffer, 0),
-				BodySize = BitConverter.ToInt32(recvData._buffer, 4)
+				PacketId = BitConverter.ToInt32(recvData.Buffer, 0),
+				BodySize = BitConverter.ToInt32(recvData.Buffer, 4)
 			};
 
 			Debug.LogFormat("Recv packet id {0}, size {1}", header.PacketId, header.BodySize);
 
-			// 패킷 조제.
-			var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, header.BodySize);
+			var byteData = new byte[header.BodySize];
+			Buffer.BlockCopy(recvData.Buffer, 8, byteData, 8, header.BodySize);
 
 			var receivedPacket = new Packet
 			{
 				PacketId = header.PacketId,
 				BodySize = header.BodySize,
-				Data = bodyJson
+				Data = byteData
 			};
 
 			// 받은 패킷을 큐로 넣어준다.
@@ -265,15 +265,15 @@ internal class TcpNetwork
 			}
 
 			// 조제한 데이터 만큼 갱신해준다.
-			recvData._readPos += NetworkDefinition.PacketHeaderSize + header.BodySize;
-			recvData._recvSize -= NetworkDefinition.PacketHeaderSize + header.BodySize;
+			recvData.ReadPos += NetworkDefinition.PacketHeaderSize + header.BodySize;
+			recvData.RecvSize -= NetworkDefinition.PacketHeaderSize + header.BodySize;
 		}
 
 		// 다시 비동기 Recv를 걸어준다.
-		recvData._socket.BeginReceive(
-			recvData._buffer,
-			recvData._recvSize,                           // 받아 놓은 길이에서부터 recv 시작.
-			recvData._buffer.Length - recvData._recvSize, // 받아 놓은 길이만큼 버퍼길이가 줄어든 상태.
+		recvData.Socket.BeginReceive(
+			recvData.Buffer,
+			recvData.RecvSize,                           // 받아 놓은 길이에서부터 recv 시작.
+			recvData.Buffer.Length - recvData.RecvSize, // 받아 놓은 길이만큼 버퍼길이가 줄어든 상태.
 			SocketFlags.None,
 			recvCallBack,
 			recvData);
@@ -294,7 +294,7 @@ internal class TcpNetwork
 		try
 		{
 			// 비동기 Send 요청을 끝내준다.
-			sendedSize = sendData._socket.EndSend(asyncResult);
+			sendedSize = sendData.Socket.EndSend(asyncResult);
 		}
 		catch (SocketException e)
 		{
@@ -302,13 +302,13 @@ internal class TcpNetwork
 		}
 
 		// 만약 요청한 사이즈보다 보낸 데이터가 작다면
-		if (sendedSize < sendData._sendSize)
+		if (sendedSize < sendData.SendSize)
 		{
 			// 다시 비동기 Send를 요청.
 			socket.BeginSend(
-				sendData._buffer,
+				sendData.Buffer,
 				sendedSize,
-				sendData._sendSize - sendedSize,
+				sendData.SendSize - sendedSize,
 				SocketFlags.Truncated,              // 메시지가 너무 커서 잘렸을 경우의 플래그.
 				sendCallBack,
 				sendData);
@@ -338,34 +338,33 @@ internal class TcpNetwork
 	}
 }
 
-
 // 비동기 수신에 사용할 구조체.
 internal class AsyncRecvData
 {
-    public byte[] _buffer;
-    public Socket _socket;
-    public int _recvSize;
-    public int _readPos;
+    public byte[] Buffer;
+    public Socket Socket;
+    public int RecvSize;
+    public int ReadPos;
 
     public AsyncRecvData(int bufferSize, Socket socket)
     {
-        _recvSize = 0;
-        _readPos = 0;
-        _buffer = new byte[bufferSize];
-        _socket = socket;
+        RecvSize = 0;
+        ReadPos = 0;
+        Buffer = new byte[bufferSize];
+        Socket = socket;
     }
 }
 
 // 비동기 발신에 사용할 구조체.
 internal class AsyncSendData
 {
-    public byte[] _buffer;
-    public Socket _socket;
-    public int _sendSize;
+    public byte[] Buffer;
+    public Socket Socket;
+    public int SendSize;
 
     public AsyncSendData(Socket socket)
     {
-        _socket = socket;
-        _sendSize = 0;
+        Socket = socket;
+        SendSize = 0;
     }
 }
