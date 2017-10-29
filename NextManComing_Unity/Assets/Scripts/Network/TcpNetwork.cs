@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
-internal partial class TcpNetwork
+internal class TcpNetwork
 {
 	#region NETWORK VARIABLES
 
@@ -14,7 +14,7 @@ internal partial class TcpNetwork
     private AsyncCallback sendCallBack;
 
     private Socket socket;
-    private Queue<Packet> packetQueue;
+    private Queue<PacketHeader> packetQueue;
 
     public bool   IsConnected  { get; private set; }
     public string Ip           { get; private set; }
@@ -30,7 +30,7 @@ internal partial class TcpNetwork
 
 		recvCallBack = new AsyncCallback(RecvCallBack);
 		sendCallBack = new AsyncCallback(SendCallBack);
-		packetQueue = new Queue<Packet>();
+		packetQueue = new Queue<PacketHeader>();
 
 		try
 		{
@@ -57,7 +57,7 @@ internal partial class TcpNetwork
 		}
 	}
 
-	public Packet GetPacketFromQueue()
+	public PacketHeader GetPacketFromQueue()
 	{
 		lock (packetQueue)
 		{
@@ -200,6 +200,7 @@ internal partial class TcpNetwork
 			);
 	}
 
+	// Recv IO 작업이 끝났을 때 호출 될 콜백 메소드.
 	private void RecvCallBack(IAsyncResult asyncResult)
 	{
 		if (IsConnected == false)
@@ -243,7 +244,7 @@ internal partial class TcpNetwork
 			// 패킷 조제.
 			var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, bodySize);
 
-			var receivedPacket = new Packet
+			var receivedPacket = new PacketHeader
 			{
 				PacketId = id,
 				BodySize = bodySize,

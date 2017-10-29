@@ -1,22 +1,15 @@
-﻿using MessagePack;
-
-enum PacketId
+﻿
+namespace Packet
 {
+	enum PacketId
+	{
 
-}
+	}
 
-class PacketHeader
-{
-
-}
-
-[MessagePackObject]
-public class Packet
-{
-	[Key(0)]
-	public int PacketId;
-	[Key(1)]
-	public int BodySize;
-	[Key(2)]
-	public string Data;
+	public class PacketHeader
+	{
+		public int PacketId;
+		public int BodySize;
+		public string Data;
+	}
 }
