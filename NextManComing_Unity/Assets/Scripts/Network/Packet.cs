@@ -1,4 +1,6 @@
 ﻿using System.Runtime.InteropServices;
+using MessagePack;
+using System;
 
 namespace Packet
 {
@@ -14,5 +16,11 @@ namespace Packet
 		public int BodySize;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1024)]
 		public string Data;
+	}
+
+	public class ServerConnectReq
+	{
+		public string Id;
+		public Int64 Token;
 	}
 }
