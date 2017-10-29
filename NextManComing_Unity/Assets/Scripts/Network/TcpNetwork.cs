@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
-using Packet;
+using PacketInfo;
 
 internal class TcpNetwork
 {
@@ -15,7 +15,7 @@ internal class TcpNetwork
     private AsyncCallback sendCallBack;
 
     private Socket socket;
-    private Queue<PacketHeader> packetQueue;
+    private Queue<Packet> packetQueue;
 
     public bool   IsConnected  { get; private set; }
     public string Ip           { get; private set; }
@@ -31,7 +31,7 @@ internal class TcpNetwork
 
 		recvCallBack = new AsyncCallback(RecvCallBack);
 		sendCallBack = new AsyncCallback(SendCallBack);
-		packetQueue = new Queue<PacketHeader>();
+		packetQueue = new Queue<Packet.Packet>();
 
 		try
 		{
@@ -58,7 +58,7 @@ internal class TcpNetwork
 		}
 	}
 
-	public PacketHeader GetPacketFromQueue()
+	public Packet GetPacketFromQueue()
 	{
 		lock (packetQueue)
 		{
@@ -236,19 +236,21 @@ internal class TcpNetwork
 			}
 
 			// 패킷 헤더 조제.
-			var header = new PacketHeader();
+			var header = new PacketHeader()
+			{
+				PacketId = BitConverter.ToInt32(recvData._buffer, 0),
+				BodySize = BitConverter.ToInt32(recvData._buffer, 4)
+			};
 
-			var id = BitConverter.ToInt32(recvData._buffer, 0);
-			var bodySize = BitConverter.ToInt32(recvData._buffer, 4);
-			Debug.LogFormat("Recv packet id {0}, size {1}", id, bodySize);
+			Debug.LogFormat("Recv packet id {0}, size {1}", header.PacketId, header.BodySize);
 
 			// 패킷 조제.
-			var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, bodySize);
+			var bodyJson = NetworkDefinition.NetworkEncoding.GetString(recvData._buffer, 8, header.BodySize);
 
-			var receivedPacket = new PacketHeader
+			var receivedPacket = new Packet
 			{
-				PacketId = id,
-				BodySize = bodySize,
+				PacketId = header.PacketId,
+				BodySize = header.BodySize,
 				Data = bodyJson
 			};
 
@@ -259,8 +261,8 @@ internal class TcpNetwork
 			}
 
 			// 조제한 데이터 만큼 갱신해준다.
-			recvData._readPos += NetworkDefinition.PacketHeaderSize + bodySize;
-			recvData._recvSize -= NetworkDefinition.PacketHeaderSize + bodySize;
+			recvData._readPos += NetworkDefinition.PacketHeaderSize + header.BodySize;
+			recvData._recvSize -= NetworkDefinition.PacketHeaderSize + header.BodySize;
 		}
 
 		// 다시 비동기 Recv를 걸어준다.

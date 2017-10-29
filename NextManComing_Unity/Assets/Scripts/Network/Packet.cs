@@ -2,7 +2,7 @@
 using MessagePack;
 using System;
 
-namespace Packet
+namespace PacketInfo
 {
 	enum PacketId
 	{
@@ -11,6 +11,13 @@ namespace Packet
 
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
 	public class PacketHeader
+	{
+		public int PacketId;
+		public int BodySize;
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
+	public class Packet
 	{
 		public int PacketId;
 		public int BodySize;
