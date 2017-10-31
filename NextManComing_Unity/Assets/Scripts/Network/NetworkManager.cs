@@ -30,7 +30,7 @@ internal partial class NetworkManager : MonoBehaviour
 	public void Initialize()
 	{
 		// TcpNetwork 생성.
-		TcpHandler = new TcpNetwork("10.73.43.213");
+		TcpHandler = new TcpNetwork("127.0.0.1");
 		TcpHandler.ConnectToServer();
 
 		// HttpNetwork 생성
