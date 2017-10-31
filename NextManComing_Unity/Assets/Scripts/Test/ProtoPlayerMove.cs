@@ -9,6 +9,9 @@ public class ProtoPlayerMove : MonoBehaviour
 	private CharacterController characterController;
 
 	[SerializeField]
+	private ProtoPlayerAnim playerAnim;
+
+	[SerializeField]
 	private Transform cameraTransform;
 
 	[SerializeField]
@@ -27,7 +30,7 @@ public class ProtoPlayerMove : MonoBehaviour
 		float x = Input.GetAxis("Horizontal");
 		float z = Input.GetAxis("Vertical");
 
-		if (x != 0f || z != 0f)
+		if (x != 0.0f || z != 0.0f)
 		{
 			float moveSpeed;
 
@@ -45,6 +48,10 @@ public class ProtoPlayerMove : MonoBehaviour
 			moveDirection *= moveSpeed;
 
 			characterController.Move(moveDirection * Time.deltaTime);
+		}
+		else
+		{
+
 		}
 	}
 }
