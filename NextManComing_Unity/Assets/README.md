@@ -6,3 +6,5 @@ Git에 올리지 못하는 에셋들을 적어놓았습니다. </br>
 [Unity Mask Man](https://www.assetstore.unity3d.com/kr/#!/content/16383)
 
 [MessagePack Unity](https://github.com/neuecc/MessagePack-CSharp/releases)
+
+[Stone Floor Texture](https://www.assetstore.unity3d.com/kr/#!/content/20336)
