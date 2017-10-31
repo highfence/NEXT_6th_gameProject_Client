@@ -41,3 +41,7 @@ sysinfo.txt
 
 # Custom (highfence@naver.com)
 Library/
+Temp/
+Private/
+packages/
+.vs/
