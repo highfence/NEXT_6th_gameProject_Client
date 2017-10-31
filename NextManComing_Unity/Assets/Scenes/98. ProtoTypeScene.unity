@@ -301,6 +301,10 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 180
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 931d5844b7443234b81f19c55eeb6f7f, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 957dec5fc9ca693408e4350cb9188522, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 931d5844b7443234b81f19c55eeb6f7f, type: 3}
   m_IsPrefabParent: 0
@@ -510,6 +514,11 @@ Transform:
 GameObject:
   m_PrefabParentObject: {fileID: 100170, guid: 931d5844b7443234b81f19c55eeb6f7f, type: 3}
   m_PrefabInternal: {fileID: 206479400}
+--- !u!95 &1646215559 stripped
+Animator:
+  m_PrefabParentObject: {fileID: 9500000, guid: 931d5844b7443234b81f19c55eeb6f7f,
+    type: 3}
+  m_PrefabInternal: {fileID: 206479400}
 --- !u!136 &1646215561
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -534,3 +543,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ea273c61401a745987d79f8c0ac49f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 5
+  npcAnim: {fileID: 1646215559}

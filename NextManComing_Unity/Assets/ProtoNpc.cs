@@ -20,9 +20,11 @@ public class ProtoNpc : MonoBehaviour
 		
 	}
 
-	void Damage(Vector3 playerPosition)
+	private void Damage(Vector3 playerPosition)
 	{
 		hp -= 1;
+
+		transform.LookAt(playerPosition);
 
 		if (hp <= 0)
 		{
