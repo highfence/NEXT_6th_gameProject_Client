@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class ProtoPlayerControll : MonoBehaviour
@@ -26,7 +23,7 @@ public class ProtoPlayerControll : MonoBehaviour
 
 	public void Start()
 	{
-
+		transform.name = "player";
 	}
 
 	public void Update()
@@ -105,8 +102,16 @@ public class ProtoPlayerControll : MonoBehaviour
 
 	private void EndAttack()
 	{
-		Debug.Log("Attack End!");
 		IsAttacking = false;
 	}
 
+	private void OnControllerColliderHit(ControllerColliderHit hit)
+	{
+		if (IsAttacking == true && hit.gameObject.name == "npc")
+		{
+			IsAttacking = false;
+			hit.gameObject.SendMessage("Damage", transform.position);
+			Debug.Log("Damage!");
+		}
+	}
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using PacketInfo;
+using System;
 using UnityEngine;
-using PacketInfo;
 
 public class NetworkTestManager : MonoBehaviour
 {

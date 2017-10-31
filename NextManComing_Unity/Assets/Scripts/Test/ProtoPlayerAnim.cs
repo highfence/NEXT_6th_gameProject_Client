@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 public class ProtoPlayerAnim : MonoBehaviour
@@ -12,7 +10,6 @@ public class ProtoPlayerAnim : MonoBehaviour
 	{
 		animator.SetBool("walk", false);
 		animator.SetBool("run", false);
-		animator.SetBool("back", false);
 	}
 
 	public void Walk()
@@ -25,11 +22,6 @@ public class ProtoPlayerAnim : MonoBehaviour
 	{
 		animator.SetBool("walk", true);
 		animator.SetBool("run", true);
-	}
-
-	public void Back()
-	{
-		animator.SetBool("back", true);
 	}
 
 	public void Attack()
