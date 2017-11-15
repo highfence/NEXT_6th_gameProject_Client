@@ -1,0 +1,11 @@
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\bin\Debug\netcoreapp2.0\TestClient.deps.json
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\bin\Debug\netcoreapp2.0\TestClient.runtimeconfig.json
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\bin\Debug\netcoreapp2.0\TestClient.runtimeconfig.dev.json
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\bin\Debug\netcoreapp2.0\TestClient.dll
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\bin\Debug\netcoreapp2.0\TestClient.pdb
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.csprojResolveAssemblyReference.cache
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.csproj.CoreCompileInputs.cache
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.AssemblyInfoInputs.cache
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.AssemblyInfo.cs
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.dll
+G:\Projects\NEXT_6th_gameProject_Client\TestClient\TestClient\obj\Debug\netcoreapp2.0\TestClient.pdb
