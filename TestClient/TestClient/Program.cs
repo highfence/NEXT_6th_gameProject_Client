@@ -28,6 +28,7 @@ namespace TestClient
 				var byteReq = MessagePackSerializer.Serialize(req);
 
 				network.Send(byteReq);
+				network.WaitForReceive();
 			}
 
 			Console.ReadLine();
@@ -67,7 +68,7 @@ namespace TestClient
 		{
 			var header = new PacketHeader()
 			{
-				PacketId = 1,
+				PacketId = 101,
 				BodySize = message.Length
 			};
 
@@ -81,6 +82,57 @@ namespace TestClient
 			socket.Send(buffer, SocketFlags.None);
 
 			Console.WriteLine($"Send Byte({buffer.Length}), Header Length({byteHeader.Length}), Message Length({message.Length})");
+		}
+
+		public void WaitForReceive()
+		{
+			int receivedSize = 0;
+
+			try
+			{
+				receivedSize = socket.Receive(buffer, SocketFlags.None);
+
+				PacketHeader header;
+
+				if (receivedSize > 3)
+				{
+					byte[] headerBytes = new byte[3];
+
+					Array.Copy(buffer, headerBytes, 3);
+
+					header = MessagePackSerializer.Deserialize<PacketHeader>(headerBytes);
+
+				}
+				else
+				{
+					Console.WriteLine("Received size is smaller than header.");
+					return;
+				}
+
+				if (receivedSize > header.BodySize + 3)
+				{
+					byte[] bodyBytes = new byte[header.BodySize];
+
+					Array.Copy(buffer, 3, bodyBytes, 0, header.BodySize);
+
+					var body = MessagePackSerializer.Deserialize<LoginRes>(bodyBytes);
+
+					Console.WriteLine($"Received Result : {body.Result}");
+				}
+				else
+				{
+					Console.WriteLine("Received size is smaller than body.");
+					return;
+				}
+			}
+			catch (SocketException e)
+			{
+				Console.WriteLine($"Receive failed. Message({e.Message})");
+			}
+			finally
+			{
+				Array.Clear(buffer, 0, 1024);
+			}
 		}
 
 		internal void Close()
@@ -106,5 +158,12 @@ namespace TestClient
 		public string UserId;
 		[Key(1)]
 		public Int64 Token;
+	}
+
+	[MessagePackObject]
+	public class LoginRes
+	{
+		[Key(0)]
+		public int Result;
 	}
 }
