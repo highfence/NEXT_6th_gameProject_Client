@@ -10,18 +10,23 @@ namespace PacketInfo
 		ServerConnectRes = 102
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 4)]
+	[MessagePackObject]
 	public class PacketHeader
 	{
+		[Key(0)]
 		public int PacketId;
+		[Key(1)]
 		public int BodySize;
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode, Pack = 1)]
+	[MessagePackObject]
 	public class Packet
 	{
+		[Key(0)]
 		public int PacketId;
+		[Key(1)]
 		public int BodySize;
+		[Key(2)]
 		public byte[] Data;
 	}
 

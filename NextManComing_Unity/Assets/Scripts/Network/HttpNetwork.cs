@@ -12,37 +12,34 @@ public class HttpNetwork : MonoBehaviour
 	// @ Param 3 : Post가 성공했을 경우 반환 값이 인자로 들어가는 콜백 함수.
 	public IEnumerator PostRequest<T>(string url, string bodyJsonString, Func<T, bool> onSuccess)
 	{
-		var request = new UnityWebRequest(url, "POST");
+		var request    = new UnityWebRequest(url, "POST");
 		byte[] bodyRaw = new System.Text.UTF8Encoding().GetBytes(bodyJsonString);
 
-		request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+		request.uploadHandler   = new UploadHandlerRaw(bodyRaw);
 		request.downloadHandler = new DownloadHandlerBuffer();
 		request.SetRequestHeader("Content-Type", "application/json");
 
 		// IO가 끝날때까지 사용권 반환.
-		yield return request.SendWebRequest();
+		yield return request.Send();
 
 		if (request.isNetworkError)
 		{
 			Debug.LogError("Http Post Failed");
 		}
+		// 성공했을 경우.
+		else if (request.responseCode == 200)
+		{
+			// 받은 정보를 처리하도록 넘겨준다.
+			onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
+		}
+		else if (request.responseCode == 401)
+		{
+			Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
+			StartCoroutine(PostRequest<T>(url, bodyJsonString, onSuccess));
+		}
 		else
 		{
-			// 성공했을 경우.
-			if (request.responseCode == 200)
-			{
-				// 받은 정보 처리하도록 넘겨준다.
-				onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
-			}
-			else if (request.responseCode == 401)
-			{
-				Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
-				StartCoroutine(PostRequest<T>(url, bodyJsonString, onSuccess));
-			}
-			else
-			{
-				Debug.Log("Request failed (status : " + request.responseCode + ")");
-			}
+			Debug.Log("Request failed (status : " + request.responseCode + ")");
 		}
 	}
 }

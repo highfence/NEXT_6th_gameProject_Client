@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using MessagePack;
 using UnityEngine;
 using PacketInfo;
 
@@ -84,64 +85,19 @@ internal class TcpNetwork
 		}
 
 		var sendData = new AsyncSendData(socket);
-		int id;
-		int bodySize;
 
-		// 포인터 동작 수행.
-		unsafe
+		var packetByte = MessagePackSerializer.Serialize(data);
+
+		var header = new PacketHeader()
 		{
-			#region PREPARE SENDING DATAS
+			PacketId = (int)packetId,
+			BodySize = packetByte.Length
+		};
 
-			// 보낼 데이터 구조체를 Json 형태로 바꿔줌.
-			string jsonData = JsonUtility.ToJson(data);
+		var headerByte = MessagePackSerializer.Serialize(header);
 
-			id = (int)packetId;
-			bodySize = jsonData.Length + 1;
-
-
-			// Send 버퍼 생성.
-			sendData.Buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
-			sendData.SendSize = NetworkDefinition.PacketHeaderSize + bodySize;
-			#endregion
-
-			#region COPYING PACKET HEADER
-
-			// 패킷 아이디 주소의 첫 번째 자리.
-			byte* packetIdPos = (byte*)&id;
-
-			// 포인터를 옮겨가며 버퍼에 기록.
-			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
-			{
-				sendData.Buffer[i] = packetIdPos[i];
-			}
-
-			// 패킷 바디사이즈 주소의 첫 번째 자리.
-			byte* bodySizePos = (byte*)&bodySize;
-
-			// 아이디를 기록했던 버퍼 자리 뒤부터 기록.
-			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
-			{
-				sendData.Buffer[NetworkDefinition.IntSize + i] = bodySizePos[i];
-			}
-			#endregion
-
-			#region COPYING PACKET BODY
-
-			// 패킷 바디 주소의 첫 번째 자리.
-			char[] bodyPos = jsonData.ToCharArray();
-
-			// 헤더를 기록했던 버퍼 자리 뒤부터 기록.
-			for (int i = 0; i < bodySize - 1; ++i)
-			{
-				sendData.Buffer[NetworkDefinition.PacketHeaderSize + i] = (byte)bodyPos[i];
-			}
-
-			// 뒤에 널 문자 추가.
-			var nullChar = Convert.ToByte('\0');
-			sendData.Buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
-
-			#endregion;
-		}
+		Array.Copy(headerByte, sendData.Buffer, NetworkDefinition.PacketHeaderSize);
+		Array.Copy(packetByte, 0, sendData.Buffer, NetworkDefinition.PacketHeaderSize, header.BodySize);
 
 		try
 		{
@@ -149,7 +105,7 @@ internal class TcpNetwork
 			socket.BeginSend(
 				sendData.Buffer,
 				0,
-				NetworkDefinition.PacketHeaderSize + bodySize,
+				NetworkDefinition.PacketHeaderSize + header.BodySize,
 				SocketFlags.None,
 				sendCallBack,
 				sendData);
@@ -159,7 +115,6 @@ internal class TcpNetwork
 			HandleException(e);
 			return;
 		}
-
 	}
 
 	// 게임 서버와 접속을 시도하는 메소드.
