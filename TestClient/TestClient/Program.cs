@@ -109,15 +109,15 @@ namespace TestClient
 					return;
 				}
 
-				if (receivedSize > header.BodySize + 3)
+				if (receivedSize >= header.BodySize + 3)
 				{
 					byte[] bodyBytes = new byte[header.BodySize];
 
 					Array.Copy(buffer, 3, bodyBytes, 0, header.BodySize);
 
-					var body = MessagePackSerializer.Deserialize<LoginRes>(bodyBytes);
+					var loginRes = MessagePackSerializer.Deserialize<LoginRes>(bodyBytes);
 
-					Console.WriteLine($"Received Result : {body.Result}");
+					Console.WriteLine($"loginRes Arrived({loginRes.Result})");
 				}
 				else
 				{
