@@ -34,18 +34,19 @@ public class LoginSceneManager : MonoBehaviour
 		#region INPUT FIELD INITIALIZE
 
 		var idInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
+		Assert.IsNotNull(idInputField);
 
 		if (idInputField != null)
 		{
 			idInputField.name = "Id Input Field";
-			idInputField.onValueChanged.AddListener(delegate { IdValueChangeCheck(idInputField.text); });
+			idInputField.onValueChanged.AddListener(delegate { OnIdValueChanged(idInputField.text); });
 
 			idInputField.text = "Type Your ID...";
 
 			var fieldPosition = new Vector3()
 			{
 				x = Screen.width * 0.5f,
-				y = Screen.height * 0.35f,
+				y = Screen.height * 0.39f,
 				z = 0
 			};
 
@@ -55,18 +56,19 @@ public class LoginSceneManager : MonoBehaviour
 		}
 
 		var pwInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
+		Assert.IsNotNull(pwInputField);
 
 		if (pwInputField != null)
 		{
 			pwInputField.name = "Pw Input Field";
-			pwInputField.onValueChanged.AddListener(delegate { PwValueChangeCheck(pwInputField.text); });
+			pwInputField.onValueChanged.AddListener(delegate { OnPwValueChanged(pwInputField.text); });
 
 			pwInputField.text = "Type Your Password...";
 
 			var fieldPosition = new Vector3()
 			{
 				x = Screen.width * 0.5f,
-				y = Screen.height * 0.25f,
+				y = Screen.height * 0.29f,
 				z = 0
 			};
 
@@ -77,17 +79,52 @@ public class LoginSceneManager : MonoBehaviour
 
 		#endregion
 
+		#region BUTTON FIELD INITIALIZE
 
+		var loginButton = Instantiate(Resources.Load("Prefabs/Button") as GameObject).GetComponent<Button>();
+		Assert.IsNotNull(loginButton);
+
+		if (loginButton != null)
+		{
+			loginButton.name = "Login Button";
+			loginButton.onClick.AddListener(OnLoginButtonClicked);
+
+			var buttonText = loginButton.gameObject.GetComponentInChildren<Text>();
+			Assert.IsNotNull(buttonText);
+			buttonText.text = "LOGIN";
+
+			var buttonPosition = new Vector3()
+			{
+				x = Screen.width * 0.5f,
+				y = Screen.height * 0.15f,
+				z = 0
+			};
+
+			loginButton.transform.position = buttonPosition;
+
+			uiSystem.AttachUI(loginButton.gameObject);
+		}
+
+		#endregion
 	}
 
-	private void IdValueChangeCheck(string changedValue)
+	#region CALLBACK METHODS
+
+	private void OnIdValueChanged(string changedValue)
 	{
 		idInput = changedValue;
 	}
 
-	private void PwValueChangeCheck(string changedValue)
+	private void OnPwValueChanged(string changedValue)
 	{
 		pwInput = changedValue;
 	}
+
+	private void OnLoginButtonClicked()
+	{
+		Debug.Log($"Login Button Clicked. Id({idInput}), Pw({pwInput})");
+	}
+
+	#endregion
 
 }
