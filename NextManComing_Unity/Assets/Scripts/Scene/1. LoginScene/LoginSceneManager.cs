@@ -134,9 +134,11 @@ public class LoginSceneManager : MonoBehaviour
 		{
 			Debug.LogAssertion("Login Failed. ID / PW is Null or Empty");
 
+			var infoBox = Instantiate(Resources.Load("Prefabs/MessageBox") as GameObject).GetComponent<MessageBox>();
+			Assert.IsNotNull(infoBox);
 
-
-			// TODO :: 메시지 박스 띄워서 안내.
+			uiSystem.AttachUI(infoBox.gameObject);
+			infoBox.Show("Login failed. \n Please checkout ID & PW written properly");
 
 			return;
 		}
