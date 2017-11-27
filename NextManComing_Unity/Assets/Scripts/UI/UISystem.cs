@@ -8,10 +8,10 @@ using UnityEngine.Assertions;
 public class UISystem : MonoBehaviour
 {
 	[SerializeField]
-	public Camera UICam { get; set; }
+	public Camera UICam;
 
 	[SerializeField]
-	public Canvas UICanvas { get; set; }
+	public Canvas UICanvas;
 
 	private void Start()
 	{
@@ -23,6 +23,8 @@ public class UISystem : MonoBehaviour
 	// UI 시스템에 만들어진 UI 오브젝트를 등록하는 메서드.
 	public void AttachUI(GameObject uiObject)
 	{
+		Assert.IsNotNull(uiObject);
+
 		uiObject.transform.SetParent(UICanvas.transform);
 	}
 }

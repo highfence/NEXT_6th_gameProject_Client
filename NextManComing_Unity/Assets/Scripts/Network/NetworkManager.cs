@@ -47,17 +47,17 @@ internal partial class NetworkManager : MonoBehaviour
 	{
 		// TODO :: Close Session Packet을 보내준다.
 
-		TcpHandler.CloseNetwork();
+		TcpHandler?.CloseNetwork();
 	}
 
 	private void Update()
 	{
-		if (TcpHandler.IsMessageExist())
-		{
-			var receivedPacket = TcpHandler.GetPacketFromQueue();
+		// 아직 Tcp핸들러가 초기화되지 않았거나, 메시지가 없다면 바로 리턴.
+		if (TcpHandler == null || TcpHandler.IsMessageExist() == false) return;
 
-			InvokePacketEvents(receivedPacket);
-		}
+		var receivedPacket = TcpHandler.GetPacketFromQueue();
+
+		InvokePacketEvents(receivedPacket);
 	}
 
 	private void InvokePacketEvents(Packet receivedPacket)
