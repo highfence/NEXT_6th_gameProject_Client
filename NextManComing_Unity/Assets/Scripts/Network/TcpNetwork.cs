@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
-using PacketInfo;
+using MessagePack;
 
 internal class TcpNetwork
 {
@@ -84,64 +84,21 @@ internal class TcpNetwork
 		}
 
 		var sendData = new AsyncSendData(socket);
-		int id;
-		int bodySize;
 
-		// 포인터 동작 수행.
-		unsafe
+		var messageBytes = MessagePackSerializer.Serialize(data);
+
+		var header = new PacketHeader()
 		{
-			#region PREPARE SENDING DATAS
+			PacketId = (int)packetId,
+			BodySize = messageBytes.Length
+		};
 
-			// 보낼 데이터 구조체를 Json 형태로 바꿔줌.
-			string jsonData = JsonUtility.ToJson(data);
+		var headerBytes = MessagePackSerializer.Serialize(header);
 
-			id = (int)packetId;
-			bodySize = jsonData.Length + 1;
+		sendData.Buffer = new byte[headerBytes.Length + messageBytes.Length];
 
-
-			// Send 버퍼 생성.
-			sendData.Buffer = new byte[NetworkDefinition.PacketHeaderSize + bodySize + 1];
-			sendData.SendSize = NetworkDefinition.PacketHeaderSize + bodySize;
-			#endregion
-
-			#region COPYING PACKET HEADER
-
-			// 패킷 아이디 주소의 첫 번째 자리.
-			byte* packetIdPos = (byte*)&id;
-
-			// 포인터를 옮겨가며 버퍼에 기록.
-			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
-			{
-				sendData.Buffer[i] = packetIdPos[i];
-			}
-
-			// 패킷 바디사이즈 주소의 첫 번째 자리.
-			byte* bodySizePos = (byte*)&bodySize;
-
-			// 아이디를 기록했던 버퍼 자리 뒤부터 기록.
-			for (int i = 0; i < NetworkDefinition.IntSize; ++i)
-			{
-				sendData.Buffer[NetworkDefinition.IntSize + i] = bodySizePos[i];
-			}
-			#endregion
-
-			#region COPYING PACKET BODY
-
-			// 패킷 바디 주소의 첫 번째 자리.
-			char[] bodyPos = jsonData.ToCharArray();
-
-			// 헤더를 기록했던 버퍼 자리 뒤부터 기록.
-			for (int i = 0; i < bodySize - 1; ++i)
-			{
-				sendData.Buffer[NetworkDefinition.PacketHeaderSize + i] = (byte)bodyPos[i];
-			}
-
-			// 뒤에 널 문자 추가.
-			var nullChar = Convert.ToByte('\0');
-			sendData.Buffer[NetworkDefinition.PacketHeaderSize + bodySize] = nullChar;
-
-			#endregion;
-		}
+		Array.Copy(headerBytes, 0, sendData.Buffer, 0, headerBytes.Length);
+		Array.Copy(messageBytes, 0, sendData.Buffer, headerBytes.Length, messageBytes.Length);
 
 		try
 		{
@@ -149,7 +106,7 @@ internal class TcpNetwork
 			socket.BeginSend(
 				sendData.Buffer,
 				0,
-				NetworkDefinition.PacketHeaderSize + bodySize,
+				NetworkDefinition.PacketHeaderSize + messageBytes.Length,
 				SocketFlags.None,
 				sendCallBack,
 				sendData);

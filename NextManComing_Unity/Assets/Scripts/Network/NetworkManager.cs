@@ -1,6 +1,5 @@
 ﻿using MessagePack;
 using UnityEngine;
-using PacketInfo;
 using System;
 
 internal partial class NetworkManager : MonoBehaviour
@@ -27,6 +26,8 @@ internal partial class NetworkManager : MonoBehaviour
 		return _instance;
 	}
 
+	#endregion
+
 	public void Initialize()
 	{
 		// TcpNetwork 생성.
@@ -37,7 +38,6 @@ internal partial class NetworkManager : MonoBehaviour
 		HttpHandler = Instantiate(Resources.Load("Prefabs/HttpHandler") as GameObject).GetComponent<HttpNetwork>();
 	}
 
-	#endregion
 
 	// 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
 	private void OnApplicationQuit()

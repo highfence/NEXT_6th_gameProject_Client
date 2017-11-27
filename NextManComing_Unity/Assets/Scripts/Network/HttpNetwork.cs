@@ -29,19 +29,22 @@ public class HttpNetwork : MonoBehaviour
 		else
 		{
 			// 성공했을 경우.
-			if (request.responseCode == 200)
+			switch (request.responseCode)
 			{
-				// 받은 정보 처리하도록 넘겨준다.
-				onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
-			}
-			else if (request.responseCode == 401)
-			{
-				Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
-				StartCoroutine(PostRequest<T>(url, bodyJsonString, onSuccess));
-			}
-			else
-			{
-				Debug.Log("Request failed (status : " + request.responseCode + ")");
+				case 200:
+					// 받은 정보를 처리하도록 넘겨준다.
+					onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
+					break;
+
+				case 401:
+					// 다시 한 번 요청을 보내준다.
+					Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
+					StartCoroutine(PostRequest<T>(url, bodyJsonString, onSuccess));
+					break;
+
+				default:
+					Debug.Log("Request failed (status : " + request.responseCode + ")");
+					break;
 			}
 		}
 	}
