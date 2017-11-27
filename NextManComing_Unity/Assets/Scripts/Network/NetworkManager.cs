@@ -1,5 +1,5 @@
-﻿using MessagePack;
-using UnityEngine;
+﻿using UnityEngine;
+using MessagePack;
 using System;
 
 internal partial class NetworkManager : MonoBehaviour

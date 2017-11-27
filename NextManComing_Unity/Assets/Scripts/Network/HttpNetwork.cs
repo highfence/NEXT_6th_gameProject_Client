@@ -14,14 +14,14 @@ public class HttpNetwork : MonoBehaviour
 	public IEnumerator PostRequest<T>(string url, string bodyJsonString, Func<T, bool> onSuccess)
 	{
 		var request = new UnityWebRequest(url, "POST");
-		byte[] bodyRaw = new System.Text.UTF8Encoding().GetBytes(bodyJsonString);
+		var bodyRaw = new System.Text.UTF8Encoding().GetBytes(bodyJsonString);
 
 		request.uploadHandler = new UploadHandlerRaw(bodyRaw);
 		request.downloadHandler = new DownloadHandlerBuffer();
 		request.SetRequestHeader("Content-Type", "application/json");
 
 		// IO가 끝날때까지 사용권 반환.
-		yield return request.SendWebRequest();
+		yield return request.Send();
 
 		if (request.isNetworkError)
 		{
@@ -32,18 +32,18 @@ public class HttpNetwork : MonoBehaviour
 			// 성공했을 경우.
 			switch (request.responseCode)
 			{
-				case 200:
+				case 200 :
 					// 받은 정보를 처리하도록 넘겨준다.
 					onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
 					break;
 
-				case 401:
+				case 401 :
 					// 다시 한 번 요청을 보내준다.
 					Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
 					StartCoroutine(PostRequest(url, bodyJsonString, onSuccess));
 					break;
 
-				default:
+				default :
 					Debug.Log("Request failed (status : " + request.responseCode + ")");
 					break;
 			}
