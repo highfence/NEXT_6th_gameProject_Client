@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using MessagePack;
 
@@ -277,7 +278,7 @@ internal class TcpNetwork
 	}
 
 	// SocketException을 처리하는 메소드.
-	private void HandleException(SocketException e)
+	private static void HandleException(ExternalException e)
 	{
 		var errorCode = (SocketError)e.ErrorCode;
 

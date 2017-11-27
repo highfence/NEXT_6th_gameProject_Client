@@ -1,13 +1,14 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 public class LoginSceneManager : MonoBehaviour
 {
-	private DataContainer dataContainer;
+	private DataContainer  dataContainer;
 	private NetworkManager network;
-	private UISystem uiSystem;
+	private UISystem       uiSystem;
 
 	[SerializeField]
 	private string idInput;
@@ -17,8 +18,8 @@ public class LoginSceneManager : MonoBehaviour
 	private void Awake()
 	{
 		dataContainer = DataContainer.GetInstance();
-		network = NetworkManager.GetInstance();
-		uiSystem = FindObjectOfType<UISystem>();
+		network       = NetworkManager.GetInstance();
+		uiSystem      = FindObjectOfType<UISystem>();
 	}
 
 	private void Start()
@@ -108,6 +109,12 @@ public class LoginSceneManager : MonoBehaviour
 		#endregion
 	}
 
+	private bool OnLoginResultArrived(LoginRes response)
+	{
+
+		return true;
+	}
+
 	#region CALLBACK METHODS
 
 	private void OnIdValueChanged(string changedValue)
@@ -122,9 +129,24 @@ public class LoginSceneManager : MonoBehaviour
 
 	private void OnLoginButtonClicked()
 	{
+		// 패스워드와 비밀번호는 null이거나 비어있을 수 없다.
+		if (string.IsNullOrEmpty(idInput) || string.IsNullOrEmpty(pwInput))
+		{
+			Debug.LogAssertion("Login Failed. ID / PW is Null or Empty");
+
+
+
+			// TODO :: 메시지 박스 띄워서 안내.
+
+			return;
+		}
+
 		Debug.Log($"Login Button Clicked. Id({idInput}), Pw({pwInput})");
+
+
+		var httpNetwork = network.HttpHandler;
+
 	}
 
 	#endregion
-
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using MessagePack;
 
 public class HttpNetwork : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class HttpNetwork : MonoBehaviour
 				case 401:
 					// 다시 한 번 요청을 보내준다.
 					Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
-					StartCoroutine(PostRequest<T>(url, bodyJsonString, onSuccess));
+					StartCoroutine(PostRequest(url, bodyJsonString, onSuccess));
 					break;
 
 				default:
@@ -50,4 +51,34 @@ public class HttpNetwork : MonoBehaviour
 	}
 }
 
-// TODO :: Login 서버와의 통신을 위해 필요한 구조체 정의.
+// Login 서버와의 통신을 위해 필요한 구조체 정의.
+public struct LoginReq
+{
+	public string UserId;
+	public string UserPw;
+}
+
+public struct LoginRes
+{
+	public int  Result;
+	public long Token;
+}
+
+public struct ServerListReq
+{
+	public string UserId;
+	public long   Token;
+}
+
+public struct ServerListRes
+{
+	public int Result;
+	public List<string> ServerList;
+}
+
+public struct LogoutReq
+{
+	public string UserId;
+	public string UserPw;
+	public long   Token;
+}
