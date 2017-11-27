@@ -6,9 +6,9 @@ public class NetworkTestManager : MonoBehaviour
 	private NetworkManager network;
 
 	[SerializeField]
-	private string id;
+	private string id = "";
 	[SerializeField]
-	private Int64 token;
+	private long token = 0;
 
 	private void Awake()
 	{
@@ -17,12 +17,12 @@ public class NetworkTestManager : MonoBehaviour
 
 	public void OnSendButtonClicked()
 	{
-		var ServerConnectReq = new ServerConnectReq()
+		var serverConnectReq = new ServerConnectReq()
 		{
 			Id = id,
 			Token = token
 		};
 
-		network.SendPacket(ServerConnectReq, PacketId.ServerConnectReq);
+		network.SendPacket(serverConnectReq, PacketId.ServerConnectReq);
 	}
 }
