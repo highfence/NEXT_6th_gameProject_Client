@@ -16,8 +16,8 @@ public class UISystem : MonoBehaviour
 	private void Start()
 	{
 		// 필요한 컴포넌트 들이 잘 매핑 되어있는지 검사.
-		Debug.Assert(UICam);
-		Debug.Assert(UICanvas);
+		Assert.IsNotNull(UICam);
+		Assert.IsNotNull(UICanvas);
 	}
 
 	// UI 시스템에 만들어진 UI 오브젝트를 등록하는 메서드.
