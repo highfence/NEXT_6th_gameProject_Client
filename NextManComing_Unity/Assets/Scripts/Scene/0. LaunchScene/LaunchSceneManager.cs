@@ -14,7 +14,7 @@ public class LaunchSceneManager : MonoBehaviour
 
 		StartCoroutine("OnClassLoad");
 
-		DataContainer.GetInstance();
+		DataStorage.GetInstance();
 
 		NetworkManager.GetInstance();
 	}

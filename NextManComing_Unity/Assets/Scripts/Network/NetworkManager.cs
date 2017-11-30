@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using MessagePack;
+using TcpPacket;
 using System;
 
 internal partial class NetworkManager : MonoBehaviour
@@ -41,7 +42,6 @@ internal partial class NetworkManager : MonoBehaviour
 		TcpHandler.ConnectToServer();
 	}
 
-
 	// 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
 	private void OnApplicationQuit()
 	{
@@ -71,9 +71,9 @@ internal partial class NetworkManager : MonoBehaviour
 	}
 
 	// 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.
-	public void HttpPost<T>(string url, string bodyJson, Func<T, bool> onSuccess)
+	public void HttpPost<REQUEST_T, RESULT_T>(string url, REQUEST_T bodyPacket, Func<RESULT_T, bool> onResultArrivedCallback)
 	{
-		StartCoroutine(HttpHandler.PostRequest<T>(url, bodyJson, onSuccess));
+		StartCoroutine(HttpHandler.PostRequest<REQUEST_T, RESULT_T>(url, bodyPacket, onResultArrivedCallback));
 	}
 
 	// 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.

@@ -3,10 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
+using HttpPacket;
+using UnityEngine.SceneManagement;
 
 public class LoginSceneManager : MonoBehaviour
 {
-	private DataContainer  dataContainer;
+	private DataStorage    dataStorage;
 	private NetworkManager network;
 	private UISystem       uiSystem;
 
@@ -14,10 +16,12 @@ public class LoginSceneManager : MonoBehaviour
 	private string idInput;
 	[SerializeField]
 	private string pwInput;
+	[SerializeField]
+	private MessageBox msgBox;
 
 	private void Awake()
 	{
-		dataContainer = DataContainer.GetInstance();
+		dataStorage = DataStorage.GetInstance();
 		network       = NetworkManager.GetInstance();
 		uiSystem      = FindObjectOfType<UISystem>();
 	}
@@ -107,13 +111,17 @@ public class LoginSceneManager : MonoBehaviour
 		}
 
 		#endregion
+
+		#region MSG BOX INITIALIZE
+
+		Assert.IsNotNull(msgBox);
+
+		msgBox.Hide();
+
+		#endregion
 	}
 
-	private bool OnLoginResultArrived(LoginRes response)
-	{
 
-		return true;
-	}
 
 	#region CALLBACK METHODS
 
@@ -134,20 +142,40 @@ public class LoginSceneManager : MonoBehaviour
 		{
 			Debug.LogAssertion("Login Failed. ID / PW is Null or Empty");
 
-			var infoBox = Instantiate(Resources.Load("Prefabs/MessageBox") as GameObject).GetComponent<MessageBox>();
-			Assert.IsNotNull(infoBox);
-
-			uiSystem.AttachUI(infoBox.gameObject);
-			infoBox.Show("Login failed. \n Please checkout ID & PW written properly");
+			msgBox.Show("Login failed. \n Please checkout ID & PW written properly");
 
 			return;
 		}
 
 		Debug.Log($"Login Button Clicked. Id({idInput}), Pw({pwInput})");
 
+		var loginReq = new LoginReq()
+		{
+			UserId = idInput,
+			UserPw = pwInput
+		};
 
-		var httpNetwork = network.HttpHandler;
+		var reqUrl = dataStorage.Config.GetUri();
 
+		network.HttpPost<LoginReq, LoginRes>(reqUrl, loginReq, OnLoginResultArrived);
+	}
+
+	// 로그인 요청에 대한 답변이 왔을 경우 호출되는 콜백 메서드.
+	private bool OnLoginResultArrived(LoginRes response)
+	{
+		if (response.Result == 0)
+		{
+			dataStorage.Token = response.Token;
+
+			SceneManager.LoadScene("2. Server Scene");
+
+			return true;
+		}
+		else
+		{
+			msgBox.Show("Login failed. \n Please checkout ID & Pw written properly");
+			return false;
+		}
 	}
 
 	#endregion

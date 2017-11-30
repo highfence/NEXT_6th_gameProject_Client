@@ -5,11 +5,11 @@ using UnityEngine;
 
 // 클라이언트 로직에 필요한 데이터들을 담아두는 클래스.
 // 씬 전환시에 관련 씬 매니저가 할당 해제되어도 기록되어야 할 필요가 있는 정보를 기록한다.
-public class DataContainer : MonoBehaviour
+public class DataStorage : MonoBehaviour
 {
 	#region SINGLETON
 
-	private static DataContainer instance = null;
+	private static DataStorage instance = null;
 
 	private void Awake()
 	{
@@ -17,11 +17,11 @@ public class DataContainer : MonoBehaviour
 		DontDestroyOnLoad(this.gameObject);
 	}
 
-	public static DataContainer GetInstance()
+	public static DataStorage GetInstance()
 	{
 		if (instance == null)
 		{
-			instance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject).GetComponent<DataContainer>();
+			instance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject).GetComponent<DataStorage>();
 		}
 
 		return instance;
@@ -43,11 +43,13 @@ public class DataContainer : MonoBehaviour
 
 		if (loginServerConfigText != null)
 		{
-			config = LoginServerConfig.CreateFromText(loginServerConfigText);
+			Config = LoginServerConfig.CreateFromText(loginServerConfigText);
 		}
 	}
 
-	private LoginServerConfig config;
+	public LoginServerConfig Config { get; private set; }
+
+	public long Token;
 }
 
 public struct LoginServerConfig

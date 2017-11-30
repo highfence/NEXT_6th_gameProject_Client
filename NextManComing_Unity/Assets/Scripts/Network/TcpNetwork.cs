@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using MessagePack;
+using TcpPacket;
 
 internal class TcpNetwork
 {

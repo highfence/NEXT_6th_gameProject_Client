@@ -11,9 +11,10 @@ public class HttpNetwork : MonoBehaviour
 	// @ Param 1 : 접속하려는 url
 	// @ Param 2 : 보내려는 Json Serialized 구조체
 	// @ Param 3 : Post가 성공했을 경우 반환 값이 인자로 들어가는 콜백 함수.
-	public IEnumerator PostRequest<T>(string url, string bodyJsonString, Func<T, bool> onSuccess)
+	public IEnumerator PostRequest<REQUEST_T, RESULT_T>(string url, REQUEST_T bodyPacket, Func<RESULT_T, bool> onResultArrivedCallback)
 	{
 		var request = new UnityWebRequest(url, "POST");
+		var bodyJsonString = JsonUtility.ToJson(bodyPacket); 
 		var bodyRaw = new System.Text.UTF8Encoding().GetBytes(bodyJsonString);
 
 		request.uploadHandler = new UploadHandlerRaw(bodyRaw);
@@ -21,7 +22,7 @@ public class HttpNetwork : MonoBehaviour
 		request.SetRequestHeader("Content-Type", "application/json");
 
 		// IO가 끝날때까지 사용권 반환.
-		yield return request.Send();
+		yield return request.SendWebRequest();
 
 		if (request.isNetworkError)
 		{
@@ -34,13 +35,13 @@ public class HttpNetwork : MonoBehaviour
 			{
 				case 200 :
 					// 받은 정보를 처리하도록 넘겨준다.
-					onSuccess(JsonUtility.FromJson<T>(request.downloadHandler.text));
+					onResultArrivedCallback(JsonUtility.FromJson<RESULT_T>(request.downloadHandler.text));
 					break;
 
 				case 401 :
 					// 다시 한 번 요청을 보내준다.
 					Debug.Log("Http Post Error 401 : Unauthorized. Resubmitted Request");
-					StartCoroutine(PostRequest(url, bodyJsonString, onSuccess));
+					StartCoroutine(PostRequest(url, bodyJsonString, onResultArrivedCallback));
 					break;
 
 				default :
