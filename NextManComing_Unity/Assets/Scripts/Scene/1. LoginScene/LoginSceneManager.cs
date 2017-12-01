@@ -156,7 +156,9 @@ public class LoginSceneManager : MonoBehaviour
 		};
 
 		dataStorage = DataStorage.GetInstance();
-		var reqUrl = dataStorage.Config.GetUri();
+		var reqUrl = dataStorage.Config.GetUri() + "Login/Login";
+
+		Debug.Log($"Login req url : {reqUrl}");
 
 		network.HttpPost<LoginReq, LoginRes>(reqUrl, loginReq, OnLoginResultArrived);
 	}
@@ -167,6 +169,8 @@ public class LoginSceneManager : MonoBehaviour
 		if (response.Result == 0)
 		{
 			dataStorage.Token = response.Token;
+
+			Debug.Log($"Login Result Arrived. Token({response.Token})");
 
 			SceneManager.LoadScene("2. Server Scene");
 

@@ -79,7 +79,7 @@ public struct LoginServerConfig
 			instance = new LoginServerConfig()
 			{
 				LoginServerAddr = "localhost",
-				Port = "19000"
+				Port = "18000"
 			};
 #else
             instance = JsonUtility.FromJson<LoginServerConfig>(text);
