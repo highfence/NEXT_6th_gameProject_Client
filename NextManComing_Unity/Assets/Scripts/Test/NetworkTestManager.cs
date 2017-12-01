@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using TcpPacket;
 
 public class NetworkTestManager : MonoBehaviour
 {

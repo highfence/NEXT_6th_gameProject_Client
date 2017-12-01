@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 // 클라이언트 로직에 필요한 데이터들을 담아두는 클래스.
 // 씬 전환시에 관련 씬 매니저가 할당 해제되어도 기록되어야 할 필요가 있는 정보를 기록한다.
@@ -21,13 +22,18 @@ public class DataStorage : MonoBehaviour
 	{
 		if (instance == null)
 		{
-			instance = Instantiate(Resources.Load("Prefabs/DataContainer") as GameObject).GetComponent<DataStorage>();
+			var prefab = Instantiate(Resources.Load("Prefabs/DataStorage")) as GameObject;
+
+			Assert.IsNotNull(prefab);
+
+			instance = prefab.GetComponent<DataStorage>();
+
+			Assert.IsNotNull(instance);
 		}
 
 		return instance;
 	}
 
-	#endregion
 
 	// 초기화 메소드.
 	// 보유한 자료중에 초기화가 필요한 자료가 있다면 여기서 처리.
@@ -35,6 +41,8 @@ public class DataStorage : MonoBehaviour
 	{
 		LoadConfigs();
 	}
+
+	#endregion
 
 	// 설정 파일 로드 메소드.
 	private void LoadConfigs()
@@ -44,6 +52,8 @@ public class DataStorage : MonoBehaviour
 		if (loginServerConfigText != null)
 		{
 			Config = LoginServerConfig.CreateFromText(loginServerConfigText);
+
+			Debug.Log($"Login Server Config Loaded. Addr({Config.LoginServerAddr}), Port({Config.Port})");
 		}
 	}
 

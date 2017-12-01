@@ -21,7 +21,7 @@ public class LoginSceneManager : MonoBehaviour
 
 	private void Awake()
 	{
-		dataStorage = DataStorage.GetInstance();
+		dataStorage   = DataStorage.GetInstance();
 		network       = NetworkManager.GetInstance();
 		uiSystem      = FindObjectOfType<UISystem>();
 	}
@@ -155,6 +155,7 @@ public class LoginSceneManager : MonoBehaviour
 			UserPw = pwInput
 		};
 
+		dataStorage = DataStorage.GetInstance();
 		var reqUrl = dataStorage.Config.GetUri();
 
 		network.HttpPost<LoginReq, LoginRes>(reqUrl, loginReq, OnLoginResultArrived);
