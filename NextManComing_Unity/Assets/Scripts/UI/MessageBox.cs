@@ -6,14 +6,27 @@ using UnityEngine.UI;
 public class MessageBox : MonoBehaviour
 {
 	public GameObject Window;
+	public GameObject OkayButton;
 	public Text MessageField;
 
+
+	// 기본적인 메시지 박스를 보여주는 메서드.
 	public void Show(string message)
 	{
 		MessageField.text = message;
 		Window.SetActive(true);
 	}
 
+
+	// 버튼이 없는 메시지 박스를 보여주는 메서드.
+	public void ShowWithNoButton(string message)
+	{
+		Show(message);
+		OkayButton?.SetActive(false);		
+	}
+
+
+	// 메시지 박스를 숨기는 메서드.
 	public void Hide()
 	{
 		Window.SetActive(false);

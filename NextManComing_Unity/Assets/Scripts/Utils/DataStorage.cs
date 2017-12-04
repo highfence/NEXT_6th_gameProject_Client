@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HttpPacket;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -59,7 +60,27 @@ public class DataStorage : MonoBehaviour
 
 	public LoginServerConfig Config { get; private set; }
 
-	public long Token;
+	public string Id { get; private set; }
+	public string Pw { get; private set; }
+
+	public long Token { get; private set; }
+	public string ManageServerAddr { get; private set; }
+	public int ManageServerPort { get; private set; }
+
+	// 로그인 정보를 저장해주는 메서드.
+	public void LoginInfoStore(string id, string pw)
+	{
+		Id = id;
+		Pw = pw;
+	}
+
+	// 로그인 결과가 도착했을 때 그 결과는 저장해주는 메서드.
+	public void LoginResultStore(LoginRes response)
+	{
+		Token = response.Token;
+		ManageServerAddr = response.ManageServerAddr;
+		ManageServerPort = response.ManageServerPort;
+	}
 }
 
 public struct LoginServerConfig

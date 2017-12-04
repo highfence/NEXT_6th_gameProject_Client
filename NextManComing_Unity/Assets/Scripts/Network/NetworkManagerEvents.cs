@@ -7,5 +7,6 @@ using TcpPacket;
  
 internal partial class NetworkManager : MonoBehaviour
 {
+	public event Action<ServerListRes> OnServerListRes = delegate { };
 	public event Action<ServerConnectRes> OnServerConnectRes = delegate { };
 }

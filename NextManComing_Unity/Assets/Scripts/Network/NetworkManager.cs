@@ -42,6 +42,11 @@ internal partial class NetworkManager : MonoBehaviour
 		TcpHandler.ConnectToServer();
 	}
 
+	public void TcpClose()
+	{
+		TcpHandler?.CloseNetwork();
+	}
+
 	// 어플리케이션이 종료될 때 소켓을 닫아주는 메소드.
 	private void OnApplicationQuit()
 	{
@@ -64,6 +69,9 @@ internal partial class NetworkManager : MonoBehaviour
 	{
 		switch ((PacketId)receivedPacket.PacketId)
 		{
+			case PacketId.ServerListRes :
+				OnServerListRes.Invoke(MessagePackSerializer.Deserialize<ServerListRes>(receivedPacket.Data));
+				break;
 			case PacketId.ServerConnectRes :
 				OnServerConnectRes.Invoke(MessagePackSerializer.Deserialize<ServerConnectRes>(receivedPacket.Data));
 				break;

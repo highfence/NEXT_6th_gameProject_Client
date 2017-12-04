@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace HttpPacket
 {
 	public struct LoginReq
@@ -11,6 +13,8 @@ namespace HttpPacket
 	{
 		public int Result;
 		public long Token;
+		public string ManageServerAddr;
+		public int ManageServerPort;
 	}
 
 	public struct LogoutReq

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using HttpPacket;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
-using HttpPacket;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LoginSceneManager : MonoBehaviour
 {
@@ -149,13 +147,14 @@ public class LoginSceneManager : MonoBehaviour
 
 		Debug.Log($"Login Button Clicked. Id({idInput}), Pw({pwInput})");
 
+		dataStorage.LoginInfoStore(idInput, pwInput);
+
 		var loginReq = new LoginReq()
 		{
 			UserId = idInput,
 			UserPw = pwInput
 		};
 
-		dataStorage = DataStorage.GetInstance();
 		var reqUrl = dataStorage.Config.GetUri() + "Login/Login";
 
 		Debug.Log($"Login req url : {reqUrl}");
@@ -168,9 +167,11 @@ public class LoginSceneManager : MonoBehaviour
 	{
 		if (response.Result == 0)
 		{
-			dataStorage.Token = response.Token;
+			dataStorage.LoginResultStore(response);
 
 			Debug.Log($"Login Result Arrived. Token({response.Token})");
+
+			network.TcpConnect(response.ManageServerAddr, response.ManageServerPort);
 
 			SceneManager.LoadScene("2. Server Scene");
 
