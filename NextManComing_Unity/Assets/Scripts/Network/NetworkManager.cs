@@ -81,7 +81,7 @@ internal partial class NetworkManager : MonoBehaviour
 	// 컴포넌트 HttpNetwork의 PostRequest 래핑 메소드.
 	public void HttpPost<REQUEST_T, RESULT_T>(string url, REQUEST_T bodyPacket, Func<RESULT_T, bool> onResultArrivedCallback)
 	{
-		StartCoroutine(HttpHandler.PostRequest<REQUEST_T, RESULT_T>(url, bodyPacket, onResultArrivedCallback));
+		StartCoroutine(HttpHandler.PostRequest(url, bodyPacket, onResultArrivedCallback));
 	}
 
 	// 컴포넌트 TcpNetwork의 Send를 호출해주는 래핑 메소드.

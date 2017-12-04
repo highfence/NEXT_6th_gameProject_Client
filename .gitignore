@@ -44,4 +44,6 @@ Library/
 Temp/
 Private/
 packages/
+Next_Man_Coming_Data/
 .vs/
+*.exe
