@@ -173,6 +173,15 @@ public class LoginSceneManager : MonoBehaviour
 	/// </summary>
 	private void OnLoginButtonClicked()
 	{
+
+#if DEBUG
+		if (string.IsNullOrEmpty(idInput) || string.IsNullOrEmpty(pwInput))
+		{
+			SceneManager.LoadScene("3. Lobby");
+			return;
+		}
+#endif
+
 		// 패스워드와 비밀번호는 null이거나 비어있을 수 없다.
 		if (string.IsNullOrEmpty(idInput) || string.IsNullOrEmpty(pwInput))
 		{
@@ -218,7 +227,7 @@ public class LoginSceneManager : MonoBehaviour
 			// Server Scene에서 로딩을 최대한 줄이기 위하여.
 			network.TcpConnect(response.ManageServerAddr, response.ManageServerPort);
 
-			SceneManager.LoadScene("2. Server Scene");
+			SceneManager.LoadScene("3. Lobby");
 
 			return true;
 		}
