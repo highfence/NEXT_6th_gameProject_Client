@@ -12,11 +12,18 @@ public class LaunchSceneManager : MonoBehaviour
 		// TODO :: 클라이언트 Config 읽어오기.
 		ScreenInitialize(1280, 800, false);
 
+		MouseInitialize();
+
 		StartCoroutine("OnClassLoad");
 
 		DataStorage.GetInstance();
 
 		NetworkManager.GetInstance();
+	}
+
+	private static void MouseInitialize()
+	{
+		Cursor.lockState = CursorLockMode.Confined;
 	}
 
 	private static void ScreenInitialize(int width, int height, bool isFullScreen)
