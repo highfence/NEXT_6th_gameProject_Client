@@ -173,7 +173,6 @@ public class LoginSceneManager : MonoBehaviour
 	/// </summary>
 	private void OnLoginButtonClicked()
 	{
-
 #if DEBUG
 		if (string.IsNullOrEmpty(idInput) || string.IsNullOrEmpty(pwInput))
 		{
