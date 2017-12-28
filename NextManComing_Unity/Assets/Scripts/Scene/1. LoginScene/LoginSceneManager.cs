@@ -9,6 +9,9 @@ public class LoginSceneManager : MonoBehaviour
 	private DataStorage    dataStorage;
 	private NetworkManager network;
 	private UISystem       uiSystem;
+	private bool		   isConnectTrying = false;
+	private InputField     idInputField;
+	private InputField     pwInputField;
 
 	[SerializeField]
 	private string idInput;
@@ -51,7 +54,7 @@ public class LoginSceneManager : MonoBehaviour
 
 		#region INPUT FIELD INITIALIZE
 
-		var idInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
+		idInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
 		Assert.IsNotNull(idInputField);
 
 		if (idInputField != null)
@@ -73,7 +76,7 @@ public class LoginSceneManager : MonoBehaviour
 			uiSystem.AttachUI(idInputField.gameObject);
 		}
 
-		var pwInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
+		pwInputField = Instantiate(Resources.Load("Prefabs/InputField") as GameObject).GetComponent<InputField>();
 		Assert.IsNotNull(pwInputField);
 
 		if (pwInputField != null)
@@ -145,7 +148,10 @@ public class LoginSceneManager : MonoBehaviour
 	/// <param name="changedValue"></param>
 	private void OnIdValueChanged(string changedValue)
 	{
-		idInput = changedValue;
+		if (isConnectTrying == false)
+		{
+			idInput = changedValue;
+		}
 	}
 
 
@@ -155,7 +161,10 @@ public class LoginSceneManager : MonoBehaviour
 	/// <param name="changedValue"></param>
 	private void OnPwValueChanged(string changedValue)
 	{
-		pwInput = changedValue;
+		if (isConnectTrying == false)
+		{
+			pwInput = changedValue;
+		}
 	}
 
 
@@ -218,6 +227,11 @@ public class LoginSceneManager : MonoBehaviour
 			// 결과가 올바르지 않으면 메시지 박스를 띄워준다.
 			// TODO :: Result 분석하여 때에 따른 메시지 박스를 호출할 수 있도록 해주어야 함.
 			msgBox.Show("Login failed. \n Please checkout ID & Pw written properly");
+			isConnectTrying = false;
+
+			OnIdValueChanged(idInputField.text);
+			OnPwValueChanged(pwInputField.text);
+
 			return false;
 		}
 	}
