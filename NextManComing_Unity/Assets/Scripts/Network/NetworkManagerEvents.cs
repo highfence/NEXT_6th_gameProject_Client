@@ -10,4 +10,6 @@ internal partial class NetworkManager : MonoBehaviour
 	public event Action<ServerListRes>    OnServerListRes    = delegate { };
 
 	public event Action<ServerConnectRes> OnServerConnectRes = delegate { };
+
+	public event Action<LobbyChatRes>	  OnLobbyChatRes     = delegate { };
 }
