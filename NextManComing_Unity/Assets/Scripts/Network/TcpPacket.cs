@@ -65,4 +65,35 @@ namespace TcpPacket
 		[Key(0)]
 		public int Result;
 	}
+
+	[MessagePackObject]
+	public class LobbyChatReq
+	{
+		[Key(0)]
+		public string Id;
+		[Key(1)]
+		public Int64 Token;
+		[Key(2)]
+		public string Message;
+		[Key(3)]
+		public Int64 Time;
+	}
+
+	[MessagePackObject]
+	public class LobbyChatRes
+	{
+		[Key(0)]
+		public int Result;
+	}
+
+	[MessagePackObject]
+	public class LobbyChatNtf
+	{
+		[Key(0)]
+		public string Id;
+		[Key(1)]
+		public string Message;
+		[Key(2)]
+		public Int64 Time;
+	}
 }
