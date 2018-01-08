@@ -7,17 +7,23 @@ using UnityEngine;
 /// </summary>
 public class ChatService : MonoBehaviour
 {
+	// 메시지의 백그라운드 이미지를 담당하는 멤버.
 	[SerializeField]
 	public GameObject MessageBox;
 
+	// 메시지 텍스트를 동적할당이 아니라 에디터에서 효율적으로 관리하도록 하기 위한 멤버.
 	[SerializeField]
 	public GameObject Message;
 
+	// 실질적으로 메시지의 텍스트를 담고있는 멤버.
+	[SerializeField]
+	public TextMesh Text;
+
+	// 메시지 박스가 사용 가능한 상황인지 알려주는 멤버.
 	[SerializeField]
 	public bool IsValiable = false;
 
 	private NetworkManager network = null;
-
 
 	private void Start()
 	{
@@ -35,7 +41,14 @@ public class ChatService : MonoBehaviour
 	/// <returns></returns>
 	private bool UIInitialize()
 	{
-		
+		if (MessageBox == null || Message == null)
+		{
+			return false;
+		}
+
+		Text = Message.GetComponent<TextMesh>();
+
+		MessageBox.SetActive(false);
 
 		return true;
 	}
