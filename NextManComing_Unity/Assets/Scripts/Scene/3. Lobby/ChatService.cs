@@ -16,7 +16,6 @@ public class ChatService : MonoBehaviour
 	public GameObject Message;
 
 	// 실질적으로 메시지의 텍스트를 담고있는 멤버.
-	[SerializeField]
 	public TextMesh MsgText;
 
 	// 메시지 박스가 사용 가능한 상황인지 알려주는 멤버.
