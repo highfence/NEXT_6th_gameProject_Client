@@ -16,6 +16,10 @@ namespace TcpPacket
 		ServerConnectReq = 201,
 		ServerConnectRes = 202,
 
+		LobbyChatReq = 210,
+		LobbyChatRes = 211,
+		LobbyChatNtf = 212,
+
 	}
 
 	[MessagePackObject]
@@ -84,6 +88,8 @@ namespace TcpPacket
 	{
 		[Key(0)]
 		public int Result;
+		[Key(1)]
+		public Int64 ReceivedTime;
 	}
 
 	[MessagePackObject]

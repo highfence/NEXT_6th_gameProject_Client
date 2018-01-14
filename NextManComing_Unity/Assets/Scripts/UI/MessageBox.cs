@@ -9,6 +9,12 @@ public class MessageBox : MonoBehaviour
 	public GameObject OkayButton;
 	public Text MessageField;
 
+	// 시작시에 자기 자신을 우선 숨김.
+	public void Start()
+	{
+		this.Hide();
+	}
+
 
 	// 기본적인 메시지 박스를 보여주는 메서드.
 	public void Show(string message)
