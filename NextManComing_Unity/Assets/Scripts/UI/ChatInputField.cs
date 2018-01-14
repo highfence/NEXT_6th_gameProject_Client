@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,8 @@ public class ChatInputField : MonoBehaviour
 	public InputField InputField = null;
 
 	public bool IsEnterPressed = false;
+
+	public Action<string> OnChatWriteEnded = delegate { };
 
 	// 우선 인풋 필드를 보이지 않게 바꿔준다.
 	public void Start()

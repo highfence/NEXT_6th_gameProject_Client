@@ -3,6 +3,7 @@ using TcpPacket;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// 로비씬 플레이어의 채팅을 가능하게 하는 컴포넌트.
@@ -34,7 +35,7 @@ public class ChatComponent : MonoBehaviour
 		}
 	}
 
-	private Queue<SendedMessage> sendedMsgQueue = null;
+	private LinkedList<SendedMessage> sendedMsgList = null;
 	private NetworkManager network  = null;
 	private DataStorage dataStorage = null;
 
@@ -44,9 +45,9 @@ public class ChatComponent : MonoBehaviour
 		this.gameObject.SetActive(false);
 
 		dataStorage = DataStorage.GetInstance();
-		sendedMsgQueue = new Queue<SendedMessage>();
+		sendedMsgList = new LinkedList<SendedMessage>();
 
-		if (NetworkInitialize() != false || UIInitialize() != false)
+		if (NetworkInitialize() != false || UIInitialize() != false || ChatInitialize() != false)
 		{
 			IsValiable = true;	
 		}
@@ -60,9 +61,7 @@ public class ChatComponent : MonoBehaviour
 	private bool UIInitialize()
 	{
 		if (MessageBox == null || Message == null)
-		{
 			return false;
-		}
 
 		// GetComponent의 비싼 비용을 줄이기 위해 미리 받아놓는다.
 		MsgText = Message.GetComponent<TextMesh>();
@@ -70,7 +69,7 @@ public class ChatComponent : MonoBehaviour
 		return true;
 	}
 
-	
+
 	/// <summary>
 	/// 네트워크 관리자를 설정해주고 사용할 네트워크 이벤트들을 등록해주는 메서드.
 	/// </summary>
@@ -89,17 +88,31 @@ public class ChatComponent : MonoBehaviour
 	}
 
 
+	private bool ChatInitialize()
+	{
+		var chatInputField = GameObject.Find("ChatInputField").GetComponent<ChatInputField>();
+
+		if (chatInputField == null)
+		{
+			Debug.LogAssertion("Chat Input Field is Null");
+			return false;
+		}
+
+		chatInputField.OnChatWriteEnded += SetMessage;
+
+		return true;
+	}
+
+
 	/// <summary>
 	/// 메시지를 설정하고 이를 UI에 띄워준다. 내부에서는 우선 메시지를 받아 패킷을 보내주고, 이에 해당하는 응답이 올 경우에 메시지를 띄운다. 
 	/// </summary>
 	/// <param name="msg"></param>
 	/// <returns></returns>
-	public bool SetMessage(string msg)
+	public void SetMessage(string msg)
 	{
 		if (IsValiable == false)
-		{
-			return false;
-		}
+			return;
 
 		// WARN :: 여기 만든 패킷은 서버와 협의되지 않음.
 		var message = new LobbyChatReq()
@@ -113,9 +126,9 @@ public class ChatComponent : MonoBehaviour
 		network.SendPacket(message, PacketId.LobbyChatReq);
 
 		// 메시지를 보냈다면 이에 해당하는 답변이 올때까지 저장해둔다.
-		sendedMsgQueue.Enqueue(new SendedMessage(message));
+		sendedMsgList.AddLast(new SendedMessage(message));
 
-		return true;
+		return;
 	}
 
 
@@ -125,33 +138,12 @@ public class ChatComponent : MonoBehaviour
 	/// <param name="packet"></param>
 	private void OnLobbyChatRes(LobbyChatRes packet)
 	{
-		// TODO :: 이 지점에서 어떤 처리를 해줄 수 있을까? 서버에서 채팅이 안된다고 나왔는데?
+		// 이 지점에서 어떤 처리를 해줄 수 있을까? 서버에서 채팅이 안된다고 나왔는데?
 		if (packet.Result != 0)
 			return;
 
-		string showMsg = "";
-
-		foreach (var sendedMsg in sendedMsgQueue)
-		{
-			// 패킷이 ReceivedTime보다 전에 보낸 친구들까지만 보여준다.
-			if (sendedMsg.SendedTime <= packet.ReceivedTime)
-			{
-				// 이전에 추가했던 메시지가 있다면 엔터를 추가해준다.
-				if (showMsg != "")
-				{
-					showMsg += System.Environment.NewLine;
-				}
-
-				showMsg += sendedMsg.Message;
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		MsgText.text = showMsg;
-		
+		ShowExistedMessage(packet.ReceivedTime);
+		StartCoroutine(SetChatTimerOn(packet.ReceivedTime, 5.0f));
 	}
 
 
@@ -159,6 +151,45 @@ public class ChatComponent : MonoBehaviour
 	{
 		yield return new WaitForSeconds(duration);
 
+		Int64 nextCallTime = msgTime + 1;
+		foreach (var sendedMsg in sendedMsgList)
+		{
+			if (sendedMsg.SendedTime <= msgTime)
+			{
+				sendedMsgList.Remove(sendedMsg);	
+			}
+			else
+			{
+				break;
+			}
+		}
 
+		if (sendedMsgList.Count == 0)
+		{
+			this.gameObject.SetActive(false);
+		}
+	}
+
+
+	private void ShowExistedMessage(Int64 confirmedTime)
+	{
+		string showMsg = "";
+		var timelyMsgs = from sendedMsg in sendedMsgList
+						 where sendedMsg.SendedTime <= confirmedTime
+						 select sendedMsg;
+
+		foreach (var msg in timelyMsgs)
+		{
+			// 이전에 추가했던 메시지가 있다면 엔터를 추가해준다.
+			if (showMsg != "")
+			{
+				showMsg += System.Environment.NewLine;
+			}
+
+			showMsg += msg.Message;
+		}
+
+		MsgText.text = showMsg;
+		this.gameObject.SetActive(true);
 	}
 }
