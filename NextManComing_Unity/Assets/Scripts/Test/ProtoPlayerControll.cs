@@ -21,18 +21,32 @@ public class ProtoPlayerControll : MonoBehaviour
 	[SerializeField]
 	public bool IsAttacking = false;
 
+	[SerializeField]
+	public bool IsUIOpened = false;
+
 	public void Start()
 	{
-		transform.name = "player";
+		transform.name = "Player";
 	}
 
 	public void Update()
 	{
-		RotatePlayer();
+		if (isPlayerControllable())
+		{
+			RotatePlayer();
 
-		MovePlayer();
+			MovePlayer();
 
-		AttackPlayer();
+			AttackPlayer();
+		}
+	}
+
+	private bool isPlayerControllable()
+	{
+		if (IsUIOpened)
+			return false;
+
+		return true;
 	}
 
 	private void MovePlayer()
@@ -100,7 +114,7 @@ public class ProtoPlayerControll : MonoBehaviour
 		}
 	}
 
-	private void EndAttack()
+	public void EndAttack()
 	{
 		IsAttacking = false;
 	}
