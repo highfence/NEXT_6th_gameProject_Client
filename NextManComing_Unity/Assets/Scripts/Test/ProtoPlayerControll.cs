@@ -96,7 +96,7 @@ public class ProtoPlayerControll : MonoBehaviour
 		//Get the angle between the points
 		float angle = AngleBetweenPoints(positionOnScreen, mouseOnScreen);
 
-		//Ta Daaa
+				
 		transform.rotation = Quaternion.Euler(new Vector3(0f, -angle, 0f));
 	}
 

@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class LobbySceneManager : MonoBehaviour
 {
-	
+	private void Update()
+	{
+	}
 }

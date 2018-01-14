@@ -22,7 +22,6 @@ public class ChatComponent : MonoBehaviour
 	// 메시지 박스가 사용 가능한 상황인지 알려주는 멤버.
 	public bool IsValiable = false;
 
-
 	private struct SendedMessage
 	{
 		public string Message;

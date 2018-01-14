@@ -2324,7 +2324,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1404642543529694}
-  m_LocalRotation: {x: 0.70919454, y: -0.02041088, z: 0.70452976, w: 0.016259175}
+  m_LocalRotation: {x: 0.7091946, y: -0.020410882, z: 0.7045298, w: 0.016259177}
   m_LocalPosition: {x: -0.0010310411, y: -0.000022151968, z: 0.0005703004}
   m_LocalScale: {x: 0.9999999, y: 1, z: 1}
   m_Children:
@@ -2856,8 +2856,6 @@ MonoBehaviour:
   Message: {fileID: 1876731457429838}
   MsgText: {fileID: 0}
   IsValiable: 1
-  network: {fileID: 0}
-  dataStorage: {fileID: 0}
 --- !u!114 &114175635492226722
 MonoBehaviour:
   m_ObjectHideFlags: 1
