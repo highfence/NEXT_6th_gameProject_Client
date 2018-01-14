@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// <summary>
 /// 로비씬 플레이어의 채팅을 가능하게 하는 컴포넌트.
 /// </summary>
-public class ChatService : MonoBehaviour
+public class ChatComponent : MonoBehaviour
 {
 	// 메시지의 백그라운드 이미지를 담당하는 멤버.
 	public GameObject MessageBox;

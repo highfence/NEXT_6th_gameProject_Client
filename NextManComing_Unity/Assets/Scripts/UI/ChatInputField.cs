@@ -22,7 +22,7 @@ public class ChatInputField : MonoBehaviour
 			if (IsEnterPressed == false)
 			{
 				IsEnterPressed = true;
-				InputField?.gameObject.SetActive(true);
+				InputField.gameObject.SetActive(true);
 				InputField.ActivateInputField();
 			}
 			else
