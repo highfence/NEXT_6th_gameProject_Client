@@ -8,6 +8,11 @@ public class LobbySceneManager : MonoBehaviour
 
 	public void Start()
 	{
+		MouseManagerInitialize();
+	}
+
+	public void MouseManagerInitialize()
+	{
 		var mouseMgrPrefab = Instantiate(Resources.Load("Prefabs/MouseManager")) as GameObject;
 		mouseManager = mouseMgrPrefab.GetComponent<MouseManager>();
 		mouseManager.transform.SetParent(this.transform);

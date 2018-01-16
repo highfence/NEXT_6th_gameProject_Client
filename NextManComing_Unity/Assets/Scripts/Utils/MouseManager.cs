@@ -3,25 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[AddComponentMenu("RotatePlayer/Mouse Look")]
 public class MouseManager : MonoBehaviour
 {
 	public bool IsEnterPressed = false;
 
-	private GameObject player = null;
+	private ProtoPlayerControll player = null;
 
 	[SerializeField]
 	public int screenWidth = 0;
 
-	[SerializeField]
 	public float boundary = Screen.width * 0.1f;
+
 	public float mouseX = 0;
 	public float mouseY = 0;
-	public bool isRightBoundary = false;
-	public bool isLeftBoundary = false;
 
 	private void Start()
 	{
-		player = GameObject.Find("Player");
+		player = GameObject.Find("Player").GetComponent<ProtoPlayerControll>();
+
 		screenWidth = Screen.width;
 	}
 
@@ -29,8 +29,13 @@ public class MouseManager : MonoBehaviour
 	{
 		AccordMouseToUI();
 
-		RotateOnBoundary();
+		if (IsEnterPressed == false)
+		{
+			RotateOnBoundary();
 
+		}
+
+		// FOR DEBUG
 		mouseX = Input.mousePosition.x;
 		mouseY = Input.mousePosition.y;
 	}
@@ -62,20 +67,18 @@ public class MouseManager : MonoBehaviour
 		// 오른쪽으로 돌기.
 		if (Input.mousePosition.x > screenWidth - boundary)
 		{
-			isRightBoundary = true;
+
 		}
 		else
 		{
-			isRightBoundary = false;
 		}
 		// 왼쪽으로 돌기.
 		if (Input.mousePosition.x < 0 + boundary)
 		{
-			isLeftBoundary = true;
 		}
 		else
 		{
-			isLeftBoundary = false;
+
 		}
 	}
 }
