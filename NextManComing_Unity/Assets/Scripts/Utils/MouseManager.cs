@@ -7,16 +7,22 @@ public class MouseManager : MonoBehaviour
 {
 	public bool IsEnterPressed = false;
 
-	public GameObject Player = null;
+	private GameObject player = null;
 
 	[SerializeField]
-	public int screenWidth = Screen.width;
+	public int screenWidth = 0;
+
 	[SerializeField]
-	public readonly int boundary = Convert.ToInt32(Screen.width * 0.1f);
+	public float boundary = Screen.width * 0.1f;
+	public float mouseX = 0;
+	public float mouseY = 0;
+	public bool isRightBoundary = false;
+	public bool isLeftBoundary = false;
 
 	private void Start()
 	{
-		Player = GameObject.Find("Player");
+		player = GameObject.Find("Player");
+		screenWidth = Screen.width;
 	}
 
 	private void Update()
@@ -24,6 +30,9 @@ public class MouseManager : MonoBehaviour
 		AccordMouseToUI();
 
 		RotateOnBoundary();
+
+		mouseX = Input.mousePosition.x;
+		mouseY = Input.mousePosition.y;
 	}
 
 	// TODO :: 이렇게 하고 보니 엔터키의 상태를 일정하게
@@ -53,10 +62,20 @@ public class MouseManager : MonoBehaviour
 		// 오른쪽으로 돌기.
 		if (Input.mousePosition.x > screenWidth - boundary)
 		{
+			isRightBoundary = true;
+		}
+		else
+		{
+			isRightBoundary = false;
 		}
 		// 왼쪽으로 돌기.
 		if (Input.mousePosition.x < 0 + boundary)
 		{
+			isLeftBoundary = true;
+		}
+		else
+		{
+			isLeftBoundary = false;
 		}
 	}
 }
