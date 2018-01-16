@@ -31,31 +31,6 @@ public class ProtoPlayerControll : MonoBehaviour
 		originalRotation = transform.localRotation;
 	}
 
-	float rotAverageX = 0F;
-	float rotationX = 0F;
-	private List<float> rotArrayX = new List<float>();
-	public float frameCounter = 20;
-	public float sensitivityX = 15F;
-	public float minimumX = -360F;
-	public float maximumX = 360F;
-	Quaternion originalRotation;
-
-	public static float ClampAngle(float angle, float min, float max)
-	{
-		angle = angle % 360;
-		if ((angle >= -360F) && (angle <= 360F))
-		{
-			if (angle < -360F)
-			{
-				angle += 360F;
-			}
-			if (angle > 360F)
-			{
-				angle -= 360F;
-			}
-		}
-		return Mathf.Clamp(angle, min, max);
-	}
 
 	public void Update()
 	{
@@ -66,22 +41,6 @@ public class ProtoPlayerControll : MonoBehaviour
 			MovePlayer();
 
 			AttackPlayer();
-
-			rotAverageX = 0f;
-			rotationX += Input.GetAxis("Mouse X") * sensitivityX;
-			rotArrayX.Add(rotationX);
-			if (rotArrayX.Count >= frameCounter)
-			{
-				rotArrayX.RemoveAt(0);
-			}
-			for (int i = 0; i < rotArrayX.Count; i++)
-			{
-				rotAverageX += rotArrayX[i];
-			}
-			rotAverageX /= rotArrayX.Count;
-			rotAverageX = ClampAngle(rotAverageX, minimumX, maximumX);
-			Quaternion xQuaternion = Quaternion.AngleAxis(rotAverageX, Vector3.up);
-			transform.localRotation = originalRotation * xQuaternion;
 		}
 	}
 
@@ -130,18 +89,50 @@ public class ProtoPlayerControll : MonoBehaviour
 		}
 	}
 
+	// For Rotate
+	public float rotAverageX = 0f;
+	public float rotationX = 0f;
+	private List<float> rotArrayX = new List<float>();
+	private float frameCounter = 20;
+	private float sensitivityX = 15f;
+	private float minimumX = -360f;
+	private float maximumX = 360f;
+	private Quaternion originalRotation;
+
 	private void RotatePlayer()
 	{
-		Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
+		rotAverageX = 0f;
+		rotationX += Input.GetAxis("Mouse X") * sensitivityX;
+		rotArrayX.Add(rotationX);
+		if (rotArrayX.Count >= frameCounter)
+		{
+			rotArrayX.RemoveAt(0);
+		}
+		for (int i = 0; i < rotArrayX.Count; i++)
+		{
+			rotAverageX += rotArrayX[i];
+		}
+		rotAverageX /= rotArrayX.Count;
+		rotAverageX = ClampAngle(rotAverageX, minimumX, maximumX);
+		Quaternion xQuaternion = Quaternion.AngleAxis(rotAverageX, Vector3.up);
+		transform.localRotation = originalRotation * xQuaternion;
+	}
 
-		//Get the Screen position of the mouse
-		Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
-
-		//Get the angle between the points
-		float angle = AngleBetweenPoints(positionOnScreen, mouseOnScreen);
-
-				
-		transform.rotation = Quaternion.Euler(new Vector3(0f, -angle, 0f));
+	public static float ClampAngle(float angle, float min, float max)
+	{
+		angle = angle % 360;
+		if ((angle >= -360F) && (angle <= 360F))
+		{
+			if (angle < -360F)
+			{
+				angle += 360F;
+			}
+			if (angle > 360F)
+			{
+				angle -= 360F;
+			}
+		}
+		return Mathf.Clamp(angle, min, max);
 	}
 
 	private float AngleBetweenPoints(Vector2 a, Vector2 b)
