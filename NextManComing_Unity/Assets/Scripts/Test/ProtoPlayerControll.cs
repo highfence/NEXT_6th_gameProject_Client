@@ -38,8 +38,6 @@ public class ProtoPlayerControll : MonoBehaviour
 	{
 		if (isPlayerControllable())
 		{
-			RotatePlayer();
-
 			MovePlayer();
 
 			AttackPlayer();
@@ -59,6 +57,7 @@ public class ProtoPlayerControll : MonoBehaviour
 
 		// Sync enter key status with input layer.
 		gameInputLayer.OnEnterKeyPressed += enterKeyStatus => { IsEnterPressed = enterKeyStatus; };
+		gameInputLayer.OnMouseRotate += RotatePlayer;
 	}
 
 	private bool isPlayerControllable()
@@ -107,54 +106,14 @@ public class ProtoPlayerControll : MonoBehaviour
 	}
 
 	// For Rotate
-	public float rotAverageX = 0f;
-	public float rotationX = 0f;
-	private List<float> rotArrayX = new List<float>();
-	private float frameCounter = 20;
-	private float sensitivityX = 15f;
-	private float minimumX = -360f;
-	private float maximumX = 360f;
 	private Quaternion originalRotation;
 
-	private void RotatePlayer()
+	// Rotate player accord with input layer data.
+	private void RotatePlayer(Quaternion xRotateQuaternion)
 	{
-		rotAverageX = 0f;
-		rotationX += Input.GetAxis("Mouse X") * sensitivityX;
-		rotArrayX.Add(rotationX);
-		if (rotArrayX.Count >= frameCounter)
-		{
-			rotArrayX.RemoveAt(0);
-		}
-		for (int i = 0; i < rotArrayX.Count; i++)
-		{
-			rotAverageX += rotArrayX[i];
-		}
-		rotAverageX /= rotArrayX.Count;
-		rotAverageX = ClampAngle(rotAverageX, minimumX, maximumX);
-		Quaternion xQuaternion = Quaternion.AngleAxis(rotAverageX, Vector3.up);
-		transform.localRotation = originalRotation * xQuaternion;
-	}
+		if (isPlayerControllable() == false) return;
 
-	public static float ClampAngle(float angle, float min, float max)
-	{
-		angle = angle % 360;
-		if ((angle >= -360F) && (angle <= 360F))
-		{
-			if (angle < -360F)
-			{
-				angle += 360F;
-			}
-			if (angle > 360F)
-			{
-				angle -= 360F;
-			}
-		}
-		return Mathf.Clamp(angle, min, max);
-	}
-
-	private float AngleBetweenPoints(Vector2 a, Vector2 b)
-	{
-		return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+		transform.localRotation = originalRotation * xRotateQuaternion;
 	}
 
 	private void AttackPlayer()
