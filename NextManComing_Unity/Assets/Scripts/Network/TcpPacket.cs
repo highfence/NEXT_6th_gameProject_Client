@@ -71,6 +71,38 @@ namespace TcpPacket
 	}
 
 	[MessagePackObject]
+	public class LobbyPlayerSpawnReq
+	{
+		[Key(0)]
+		public string Id;
+		[Key(1)]
+		public Int64 Token;
+	}
+
+	[MessagePackObject]
+	public class LobbyPlayerSpawnRes
+	{
+		[Key(0)]
+		public int X;
+		[Key(1)]
+		public int Y;
+
+		[Key(2)]
+		public List<PlayerInfo> OtherPlayerList;
+	}
+
+	[MessagePackObject]
+	public class LobbyPlayerSpawnNtf
+	{
+		[Key(0)]
+		public int Id;
+		[Key(1)]
+		public int X;
+		[Key(2)]
+		public int Y;
+	}
+
+	[MessagePackObject]
 	public class LobbyChatReq
 	{
 		[Key(0)]
