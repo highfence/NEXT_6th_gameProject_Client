@@ -52,7 +52,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsEnterPressed: 0
-  screenWidth: 0
-  boundary: 0
-  mouseX: 0
-  mouseY: 0

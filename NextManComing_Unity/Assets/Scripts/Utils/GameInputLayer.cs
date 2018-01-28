@@ -26,18 +26,11 @@ public class GameInputLayer : MonoBehaviour
 	private void WatchEnterKeyStatus()
 	{
 		// Return immediately when enter key status is not changed.
-		if (Input.GetKeyDown(KeyCode.Return) == false)
-			return;
+		if (Input.GetKeyDown(KeyCode.Return) == false) return;
 
 		// Change enter key status.
-		if (IsEnterPressed)
-		{
-			IsEnterPressed = false;
-		}
-		else
-		{
-			IsEnterPressed = true;
-		}
+		if (IsEnterPressed) IsEnterPressed = false;
+		else				IsEnterPressed = true;
 
 		// Invoke event with changed enter key status.
 		OnEnterKeyPressed.Invoke(IsEnterPressed);

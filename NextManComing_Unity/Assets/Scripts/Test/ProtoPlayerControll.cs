@@ -23,16 +23,18 @@ public class ProtoPlayerControll : MonoBehaviour
 	public bool IsAttacking = false;
 
 	[SerializeField]
-	public bool IsUIOpened = false;
+	public bool IsEnterPressed = false;
 
 	public void Start()
 	{
 		transform.name = "Player";
+
+		RegisterInputEvents();
+
 		originalRotation = transform.localRotation;
 	}
 
 	public void Update()
-
 	{
 		if (isPlayerControllable())
 		{
@@ -44,9 +46,24 @@ public class ProtoPlayerControll : MonoBehaviour
 		}
 	}
 
+	// Regist events to game input layer.
+	private void RegisterInputEvents()
+	{
+		var gameInputLayer = FindObjectOfType<GameInputLayer>();
+
+		if (gameInputLayer == null)
+		{
+			Debug.LogAssertion("There is no game input layer in this scene. (Msg from player controller initialize)");
+			return;
+		}
+
+		// Sync enter key status with input layer.
+		gameInputLayer.OnEnterKeyPressed += enterKeyStatus => { IsEnterPressed = enterKeyStatus; };
+	}
+
 	private bool isPlayerControllable()
 	{
-		if (IsUIOpened)
+		if (IsEnterPressed)
 			return false;
 
 		return true;
