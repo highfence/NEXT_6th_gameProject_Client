@@ -29,7 +29,7 @@ public class ProtoPlayerControll : MonoBehaviour
 	{
 		transform.name = "Player";
 
-		RegisterInputEvents();
+		RegistInputEvents();
 
 		originalRotation = transform.localRotation;
 	}
@@ -47,7 +47,7 @@ public class ProtoPlayerControll : MonoBehaviour
 	}
 
 	// Regist events to game input layer.
-	private void RegisterInputEvents()
+	private void RegistInputEvents()
 	{
 		var gameInputLayer = FindObjectOfType<GameInputLayer>();
 

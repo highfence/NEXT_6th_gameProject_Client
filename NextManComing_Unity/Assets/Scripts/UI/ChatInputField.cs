@@ -8,37 +8,43 @@ public class ChatInputField : MonoBehaviour
 {
 	public InputField InputField = null;
 
-	public bool IsEnterPressed = false;
-
 	public Action<string> OnChatWriteEnded = delegate { };
 
-	// 우선 인풋 필드를 보이지 않게 바꿔준다.
 	public void Start()
 	{
+		// 우선 인풋 필드를 보이지 않게 바꿔준다.
 		InputField?.gameObject.SetActive(false);
+
+		RegistInputEvents();
 	}
 
-	public void Update()
+	private void RegistInputEvents()
 	{
-		if (Input.GetKeyDown(KeyCode.Return))
-		{ 
-			if (IsEnterPressed == false)
-			{
-				IsEnterPressed = true;
-				InputField.gameObject.SetActive(true);
-				InputField.ActivateInputField();
-			}
-			else
-			{
-				IsEnterPressed = false;
+		var gameInputLayer = FindObjectOfType<GameInputLayer>();
 
-				if (InputField != null)
-				{
-					var sendMsg = InputField.text;
-					InputField.text = "";
-					InputField.gameObject.SetActive(false);
-				}
-			}
+		if (gameInputLayer == null)
+		{
+			Debug.LogAssertion("There is no GameInputLayer in this game.");
+			return;
+		}
+
+		gameInputLayer.OnEnterKeyPressed += AccordStatusToEnter;
+	}
+
+	private void AccordStatusToEnter(bool isEnterKeyPressed)
+	{
+		if (isEnterKeyPressed)
+		{
+			InputField.gameObject.SetActive(true);
+			InputField.ActivateInputField();
+		}
+		else
+		{
+			if (InputField == null) return;
+
+			var sendMsg = InputField.text;
+			InputField.text = "";
+			InputField.gameObject.SetActive(false);
 		}
 	}
 }
