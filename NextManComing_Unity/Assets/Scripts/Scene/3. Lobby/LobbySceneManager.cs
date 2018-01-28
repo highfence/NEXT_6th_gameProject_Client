@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LobbySceneManager : MonoBehaviour
 {
-	private MouseManager mouseManager = null;
+	private GameInputManager mouseManager = null;
 
 	public void Start()
 	{
@@ -14,7 +14,7 @@ public class LobbySceneManager : MonoBehaviour
 	public void MouseManagerInitialize()
 	{
 		var mouseMgrPrefab = Instantiate(Resources.Load("Prefabs/MouseManager")) as GameObject;
-		mouseManager = mouseMgrPrefab.GetComponent<MouseManager>();
+		mouseManager = mouseMgrPrefab.GetComponent<GameInputManager>();
 		mouseManager.transform.SetParent(this.transform);
 	}
 }

@@ -31,8 +31,8 @@ public class ProtoPlayerControll : MonoBehaviour
 		originalRotation = transform.localRotation;
 	}
 
-
 	public void Update()
+
 	{
 		if (isPlayerControllable())
 		{
