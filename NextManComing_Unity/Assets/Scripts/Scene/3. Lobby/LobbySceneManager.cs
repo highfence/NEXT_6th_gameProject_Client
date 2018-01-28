@@ -4,17 +4,15 @@ using UnityEngine;
 
 public class LobbySceneManager : MonoBehaviour
 {
-	private MouseManager mouseManager = null;
+	private GameInputLayer gameInputLayer = null;
 
 	public void Start()
 	{
-		MouseManagerInitialize();
+		GameInputLayerInitialize();
 	}
 
-	public void MouseManagerInitialize()
+	public void GameInputLayerInitialize()
 	{
-		var mouseMgrPrefab = Instantiate(Resources.Load("Prefabs/MouseManager")) as GameObject;
-		mouseManager = mouseMgrPrefab.GetComponent<MouseManager>();
-		mouseManager.transform.SetParent(this.transform);
+		gameInputLayer = FindObjectOfType<GameInputLayer>();
 	}
 }
