@@ -20,7 +20,7 @@ public class OtherPlayerManager : MonoBehaviour
 		playerPool = new GameObject[poolSize];
 
 		// TODO :: 프리팹 지정해줘야함.
-		var playerPrefab = Resources.Load("");
+		var playerPrefab = Resources.Load("TestNpc");
 		
 		for (var i = 0; i < poolSize; ++i)
 		{
