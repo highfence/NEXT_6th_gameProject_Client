@@ -39,8 +39,6 @@ public class ProtoPlayerControll : MonoBehaviour
 		if (isPlayerControllable())
 		{
 			MovePlayer();
-
-			AttackPlayer();
 		}
 	}
 
@@ -57,7 +55,8 @@ public class ProtoPlayerControll : MonoBehaviour
 
 		// Sync enter key status with input layer.
 		gameInputLayer.OnEnterKeyPressed += enterKeyStatus => { IsEnterPressed = enterKeyStatus; };
-		gameInputLayer.OnMouseRotate += RotatePlayer;
+		gameInputLayer.OnMouseRotate	 += RotatePlayer;
+		gameInputLayer.OnAttackPressed   += PlayerStartAttack;
 	}
 
 	private bool isPlayerControllable()
@@ -70,6 +69,8 @@ public class ProtoPlayerControll : MonoBehaviour
 
 	private void MovePlayer()
 	{
+		if (IsAttacking) return;
+
 		float x = Input.GetAxis("Horizontal");
 		float z = Input.GetAxis("Vertical");
 
@@ -116,13 +117,10 @@ public class ProtoPlayerControll : MonoBehaviour
 		transform.localRotation = originalRotation * xRotateQuaternion;
 	}
 
-	private void AttackPlayer()
+	private void PlayerStartAttack()
 	{
-		if (Input.GetMouseButtonDown(0))
-		{
-			IsAttacking = true;
-			playerAnim.Attack();
-		}
+		IsAttacking = true;
+		playerAnim.Attack();
 	}
 
 	public void EndAttack()

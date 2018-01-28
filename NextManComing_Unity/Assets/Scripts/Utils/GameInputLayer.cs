@@ -8,8 +8,9 @@ public class GameInputLayer : MonoBehaviour
 {
 	#region INPUT EVENTS
 
-	public Action<bool> OnEnterKeyPressed = delegate { };
-	public Action<Quaternion> OnMouseRotate = delegate { };
+	public Action<bool>		  OnEnterKeyPressed = delegate { };
+	public Action<Quaternion> OnMouseRotate		= delegate { };
+	public Action			  OnAttackPressed   = delegate { };
 
 	#endregion
 
@@ -23,6 +24,15 @@ public class GameInputLayer : MonoBehaviour
 		WatchEnterKeyStatus();
 
 		WatchMouseXRotate();
+
+		WatchAttackKeyStatus();
+	}
+
+	private void WatchAttackKeyStatus()
+	{
+		if (Input.GetMouseButtonDown(0) == false) return;
+
+		OnAttackPressed.Invoke();
 	}
 
 	// Watching enter key status and invoke event.
